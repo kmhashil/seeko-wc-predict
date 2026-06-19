@@ -137,6 +137,7 @@
     <nav class="tabs">
       <button data-tab="submit" class="active">PREDICT</button>
       <button data-tab="leaderboard">LEADERBOARD</button>
+      <button data-tab="mycard">MY CARD</button>
       <button data-tab="admin">ADMIN</button>
     </nav>
   </header>
@@ -206,7 +207,22 @@
       <p class="hint">Updates once results are entered by the admin.</p>
       <div id="leaderboard-content"></div>
     </section>
- 
+
+    <section class="panel" id="panel-mycard">
+      <h2 class="h">Download My Prediction Card</h2>
+      <p class="hint">Enter the WhatsApp number you submitted with to get your card.</p>
+      <div class="card" style="max-width:400px;">
+        <label for="mc-phone">WhatsApp number (10 digits)</label>
+        <input type="tel" id="mc-phone" placeholder="9XXXXXXXXX" maxlength="15">
+        <button class="primary" onclick="lookupCard()" style="margin-top:16px;">Find My Card</button>
+        <div class="msg" id="mc-msg"></div>
+      </div>
+      <div id="mc-ticket-wrap" style="display:none;margin-top:24px;">
+        <div class="ticket" id="mc-ticket"></div>
+        <button class="ghost" style="margin-top:12px;width:320px;display:block;margin-left:auto;margin-right:auto;" onclick="downloadMyCard()">⬇ Save / Share Card</button>
+      </div>
+    </section>
+
     <section class="panel" id="panel-admin">
       <div id="admin-locked">
         <h2 class="h">Admin access</h2>
@@ -443,6 +459,7 @@ function switchTab(tab){
   document.getElementById("panel-"+tab).classList.add("active");
   if(tab==="leaderboard") renderLeaderboard();
   if(tab==="submit") renderEntryCounter();
+  if(tab==="mycard") { document.getElementById('mc-ticket-wrap').style.display='none'; document.getElementById('mc-msg').className='msg'; }
   if(tab==="admin" && adminUnlocked) loadAllAndRenderAdmin();
 }
  
@@ -642,6 +659,111 @@ async function shareOrDownloadCard(){
         return;
       }
     }catch(e){ /* fall through to download */ }
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = URL.createObjectURL(blob);
+    link.click();
+  }, "image/png");
+}
+
+async function lookupCard(){
+  const mcMsg = document.getElementById("mc-msg");
+  const wrap = document.getElementById("mc-ticket-wrap");
+  const phoneRaw = document.getElementById("mc-phone").value.trim();
+  const phoneKey = normalizePhone(phoneRaw);
+
+  mcMsg.className = "msg";
+  wrap.style.display = "none";
+
+  if(phoneKey.length !== 10){
+    mcMsg.textContent = "Enter your 10-digit WhatsApp number.";
+    mcMsg.className = "msg show error";
+    return;
+  }
+
+  mcMsg.textContent = "Looking up…";
+  mcMsg.className = "msg show ok";
+
+  await loadPredictions();
+  const entry = predictions[phoneKey];
+
+  if(!entry){
+    mcMsg.textContent = "No prediction found for this number. Check the number or submit a prediction first.";
+    mcMsg.className = "msg show error";
+    return;
+  }
+
+  mcMsg.className = "msg";
+
+  // Get saved photo from state if available
+  const state = _stateCache || await _readState();
+  const photoDataUrl = (state.photos && state.photos[phoneKey]) || null;
+
+  // Render ticket into the mc-ticket element
+  const box = document.getElementById("mc-ticket");
+  box.innerHTML = "";
+
+  const stamp = document.createElement("div");
+  stamp.className = "stamp " + entry.status;
+  stamp.textContent = entry.status === "pending" ? "Pending review" : entry.status;
+  box.appendChild(stamp);
+
+  const brand = document.createElement("div");
+  brand.className = "brandline";
+  brand.textContent = "SEEKO WORLD CUP 2026";
+  box.appendChild(brand);
+
+  const head = document.createElement("div");
+  head.className = "ticket-head";
+  const avatar = document.createElement("div");
+  avatar.className = "avatar lg";
+  if(photoDataUrl){
+    const img = document.createElement("img"); img.src = photoDataUrl; avatar.appendChild(img);
+  } else {
+    avatar.textContent = getInitials(entry.name);
+  }
+  const who = document.createElement("div");
+  who.className = "who";
+  const nb = document.createElement("b"); nb.textContent = entry.name;
+  const sp = document.createElement("span"); sp.textContent = entry.phone;
+  who.appendChild(nb); who.appendChild(sp);
+  head.appendChild(avatar); head.appendChild(who);
+  box.appendChild(head);
+
+  const dl = document.createElement("dl");
+  const rows = [
+    ["Champion", entry.champion],
+    ["Runner-up", entry.runnerUp],
+    ["3rd place", entry.secondRunnerUp],
+    ["Final score", entry.champGoals + " - " + entry.runnerGoals],
+    ["Golden Ball", entry.goldenBall + " (" + entry.goldenBallCountry + ")"],
+    ["Golden Boot", entry.goldenBoot + " (" + entry.goldenBootCountry + ")"]
+  ];
+  rows.forEach(([k,v])=>{
+    const dt=document.createElement("dt"); dt.textContent=k;
+    const dd=document.createElement("dd"); dd.textContent=v;
+    dl.appendChild(dt); dl.appendChild(dd);
+  });
+  box.appendChild(dl);
+
+  wrap.style.display = "block";
+}
+
+async function downloadMyCard(){
+  const node = document.getElementById("mc-ticket");
+  if(!node || typeof html2canvas === "undefined") return;
+  const phoneKey = normalizePhone(document.getElementById("mc-phone").value.trim());
+  const entry = predictions[phoneKey];
+  const canvas = await html2canvas(node, {backgroundColor: "#18271E", scale: 2});
+  const filename = ((entry && entry.name) || "prediction").replace(/\s+/g,"_") + "_seeko_wc26.png";
+  canvas.toBlob(async (blob)=>{
+    try{
+      const file = new File([blob], filename, {type:"image/png"});
+      if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title:"My Seeko World Cup 2026 Prediction"});
+        return;
+      }
+    }catch(e){}
     const link = document.createElement("a");
     link.download = filename;
     link.href = URL.createObjectURL(blob);
