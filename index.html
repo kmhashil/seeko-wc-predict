@@ -571,12 +571,15 @@ document.getElementById("predict-form").addEventListener("submit", async (e)=>{
   if(!ballCountry || !ballPlayer){ showMsg(submitMsg,"Pick a Golden Ball country and player.",false); return; }
   if(!bootCountry || !bootPlayer){ showMsg(submitMsg,"Pick a Golden Boot country and player.",false); return; }
  
+  // Force fresh read so we always see the latest status (e.g. if admin just rejected)
+  _stateCache = null;
   await loadPredictions();
   const existing = predictions[phoneKey];
   if(existing && (existing.status==="pending" || existing.status==="approved")){
-    showMsg(submitMsg, "This WhatsApp number already has a submission (" + existing.status + "). One entry per number -- ask the admin if you need it corrected.", false);
+    showMsg(submitMsg, "This WhatsApp number already has a " + existing.status + " submission. One entry per number — ask the admin if you need it corrected.", false);
     return;
   }
+  // If rejected, allow re-submission (will overwrite the rejected entry)
  
   const entry = {
     name, phone: phoneRaw, champion, runnerUp: runnerup, secondRunnerUp: third,
