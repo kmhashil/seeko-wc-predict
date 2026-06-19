@@ -150,7 +150,7 @@
         <label for="f-name">Your name</label>
         <input type="text" id="f-name" placeholder="As it shows in the group">
  
-        <label>Profile photo (optional)</label>
+        <label>Profile photo</label>
         <div class="photo-row">
           <div class="avatar" id="photo-preview">?</div>
           <input type="file" id="f-photo" accept="image/*">
@@ -275,7 +275,7 @@ const isLocal = window.location.protocol === 'file:' ||
 // In-memory cache of the full app state (avoids repeated fetches)
 let _stateCache = null;
 
-async function _readState() {
+async function _readState(forceRefresh) {
   if (isLocal) {
     try {
       const raw = localStorage.getItem('seeko_wc26_state');
@@ -284,6 +284,8 @@ async function _readState() {
       return _stateCache || { wc26_predictions: {}, wc26_results: null, photos: {} };
     }
   }
+  // Return cache immediately unless forced refresh
+  if (!forceRefresh && _stateCache) return _stateCache;
   try {
     const res = await fetch('/api/storage', { headers: { 'Accept': 'application/json' } });
     if (!res.ok) throw new Error('Read failed: ' + res.status);
@@ -335,7 +337,8 @@ async function loadPredictions(){
   } catch(e) { predictions = {}; }
 }
 async function savePredictions(){
-  const state = await _readState();
+  // Use cache directly — no extra network read needed
+  const state = _stateCache || await _readState();
   state.wc26_predictions = predictions;
   await _writeState(state);
 }
@@ -347,7 +350,7 @@ async function loadResults(){
 }
 async function saveResults(obj){
   results = obj;
-  const state = await _readState();
+  const state = _stateCache || await _readState();
   state.wc26_results = obj;
   await _writeState(state);
 }
@@ -542,6 +545,7 @@ document.getElementById("predict-form").addEventListener("submit", async (e)=>{
   const bootPlayer = document.getElementById("f-boot-player").value;
  
   if(!name){ showMsg(submitMsg,"Enter your name.",false); return; }
+  if(!currentPhotoDataUrl){ showMsg(submitMsg,"Upload a profile photo — it's required.",false); return; }
   const phoneKey = normalizePhone(phoneRaw);
   if(phoneKey.length !== 10){ showMsg(submitMsg,"WhatsApp number must be exactly 10 digits.",false); return; }
   if(!champion || !runnerup || !third){ showMsg(submitMsg,"Pick all three placements.",false); return; }
@@ -652,6 +656,9 @@ async function renderEntryCounter(){
   document.getElementById("entry-counter").textContent =
     approved + " confirmed entries" + (pending ? " · " + pending + " awaiting review" : "");
 }
+
+// Pre-warm cache on page load so first actions are instant
+_readState();
  
 function computeScore(entry, res){
   if(!res) return null;
