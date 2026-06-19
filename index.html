@@ -3,214 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>World Cup 2026 Prediction Pool</title>
+<title>Seeko World Cup 2026 Prediction Pool</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root{
-    --bg:#0F1B14;
-    --bg-2:#0B1510;
-    --surface:#18271E;
-    --surface-2:#1F3326;
-    --line:#2C4232;
-    --text:#F4F1E8;
-    --text-muted:#93A698;
-    --gold:#E8B339;
-    --gold-dim:#7A6326;
-    --green:#6FCB9F;
-    --amber:#F2A65A;
-    --red:#E5667A;
-    --silver:#C9D3CC;
-    --bronze:#CD8B5C;
+    --bg:#0F1B14; --bg-2:#0B1510; --surface:#18271E; --surface-2:#1F3326; --line:#2C4232;
+    --text:#F4F1E8; --text-muted:#93A698; --gold:#E8B339; --gold-dim:#7A6326;
+    --green:#6FCB9F; --amber:#F2A65A; --red:#E5667A; --silver:#C9D3CC; --bronze:#CD8B5C;
     --radius:14px;
   }
   *{box-sizing:border-box;}
   body{
-    margin:0;
-    background:radial-gradient(circle at 50% 0%, var(--surface) 0%, var(--bg) 55%, var(--bg-2) 100%);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    padding-bottom:60px;
+    margin:0; background:radial-gradient(circle at 50% 0%, var(--surface) 0%, var(--bg) 55%, var(--bg-2) 100%);
+    color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; padding-bottom:60px;
   }
-  .wrap{max-width:760px;margin:0 auto;padding:0 18px;}
-
-  /* ---- Header ---- */
-  header.topbar{
-    border-bottom:1px solid var(--line);
-    padding:28px 0 0;
-    background:
-      linear-gradient(180deg, rgba(232,179,57,0.06), transparent 70%);
-  }
-  .eyebrow{
-    font-family:'Space Mono',monospace;
-    font-size:11px;
-    letter-spacing:.18em;
-    color:var(--amber);
-    text-transform:uppercase;
-  }
-  h1.title{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:clamp(34px,7vw,52px);
-    letter-spacing:.02em;
-    margin:4px 0 2px;
-    color:var(--text);
-    line-height:1;
-  }
+  .wrap{max-width:780px;margin:0 auto;padding:0 18px;}
+  header.topbar{border-bottom:1px solid var(--line);padding:28px 0 0;background:linear-gradient(180deg, rgba(232,179,57,0.06), transparent 70%);}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase;}
+  h1.title{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,6.5vw,46px);letter-spacing:.02em;margin:4px 0 2px;color:var(--text);line-height:1;}
   h1.title span{color:var(--gold);}
   .subtitle{color:var(--text-muted);font-size:14px;margin-bottom:18px;}
-  .legend{
-    display:flex;flex-wrap:wrap;gap:8px;
-    margin-bottom:18px;
-  }
-  .legend .chip{
-    font-family:'Space Mono',monospace;
-    font-size:11px;
-    border:1px solid var(--line);
-    border-radius:999px;
-    padding:4px 10px;
-    color:var(--text-muted);
-    white-space:nowrap;
-  }
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+  .legend .chip{font-family:'Space Mono',monospace;font-size:11px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--text-muted);white-space:nowrap;}
   .legend .chip b{color:var(--gold);}
-
   nav.tabs{display:flex;gap:6px;margin-top:6px;}
-  nav.tabs button{
-    flex:1;
-    font-family:'Bebas Neue',sans-serif;
-    font-size:16px;
-    letter-spacing:.04em;
-    background:transparent;
-    border:none;
-    color:var(--text-muted);
-    padding:12px 6px 14px;
-    cursor:pointer;
-    border-bottom:3px solid transparent;
-    transition:color .15s, border-color .15s;
-  }
+  nav.tabs button{flex:1;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.04em;background:transparent;border:none;color:var(--text-muted);padding:12px 6px 14px;cursor:pointer;border-bottom:3px solid transparent;transition:color .15s, border-color .15s;}
   nav.tabs button:hover{color:var(--text);}
   nav.tabs button.active{color:var(--gold);border-bottom-color:var(--gold);}
-
   main{padding:28px 0 60px;}
   section.panel{display:none;}
   section.panel.active{display:block;animation:fade .25s ease;}
   @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
-
-  h2.h{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:22px;
-    letter-spacing:.03em;
-    margin:0 0 4px;
-    color:var(--text);
-  }
+  h2.h{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.03em;margin:0 0 4px;color:var(--text);}
   p.hint{color:var(--text-muted);font-size:13px;margin:0 0 20px;}
-
-  .card{
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:20px;
-    margin-bottom:16px;
-  }
-
-  label{
-    display:block;
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:.06em;
-    color:var(--text-muted);
-    margin-bottom:6px;
-    margin-top:16px;
-  }
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:16px;}
+  label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:6px;margin-top:16px;}
   label:first-of-type{margin-top:0;}
-  input[type=text], input[type=tel], input[type=number], select{
-    width:100%;
-    background:var(--bg-2);
-    border:1px solid var(--line);
-    border-radius:8px;
-    padding:11px 12px;
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    font-size:14px;
-  }
+  input[type=text], input[type=tel], input[type=number], select{width:100%;background:var(--bg-2);border:1px solid var(--line);border-radius:8px;padding:11px 12px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;}
   input:focus, select:focus{outline:2px solid var(--gold);outline-offset:1px;}
   select{appearance:none;}
+  select:disabled{opacity:.5;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .col-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px;}
   .score-pair{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end;}
   .score-pair .vs{text-align:center;font-family:'Bebas Neue';color:var(--text-muted);padding-bottom:11px;}
-
-  button.primary{
-    margin-top:22px;
-    width:100%;
-    background:var(--gold);
-    color:#1B1404;
-    border:none;
-    border-radius:8px;
-    padding:13px;
-    font-family:'Bebas Neue',sans-serif;
-    font-size:17px;
-    letter-spacing:.04em;
-    cursor:pointer;
-  }
+  button.primary{margin-top:22px;width:100%;background:var(--gold);color:#1B1404;border:none;border-radius:8px;padding:13px;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:.04em;cursor:pointer;}
   button.primary:hover{background:#f0c357;}
-  button.ghost{
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--text);
-    border-radius:8px;
-    padding:9px 14px;
-    font-size:13px;
-    cursor:pointer;
-    font-family:'Inter';
-  }
+  button.ghost{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:9px 14px;font-size:13px;cursor:pointer;font-family:'Inter';}
   button.ghost:hover{border-color:var(--gold);color:var(--gold);}
   button.approve{background:var(--green);color:#0B1F15;border:none;border-radius:6px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;}
   button.reject{background:transparent;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;}
-
+  button.editbtn{background:transparent;border:1px solid var(--gold-dim);color:var(--gold);border-radius:6px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;}
   .msg{font-size:13px;border-radius:8px;padding:10px 12px;margin-top:14px;display:none;}
   .msg.show{display:block;}
   .msg.error{background:rgba(229,102,122,0.12);color:var(--red);border:1px solid rgba(229,102,122,0.3);}
   .msg.ok{background:rgba(111,203,159,0.12);color:var(--green);border:1px solid rgba(111,203,159,0.3);}
-
-  /* ---- Ticket / stamp signature ---- */
-  .ticket{
-    position:relative;
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:22px;
-    overflow:hidden;
-  }
-  .ticket .stamp{
-    position:absolute;
-    top:18px;right:-30px;
-    transform:rotate(18deg);
-    font-family:'Space Mono',monospace;
-    font-size:11px;
-    letter-spacing:.12em;
-    font-weight:700;
-    padding:5px 38px;
-    border:2px solid currentColor;
-    border-radius:3px;
-    text-transform:uppercase;
-  }
+ 
+  .photo-row{display:flex;align-items:center;gap:14px;}
+  .avatar{width:64px;height:64px;border-radius:50%;background:var(--bg-2);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:22px;color:var(--gold);overflow:hidden;flex-shrink:0;}
+  .avatar img{width:100%;height:100%;object-fit:cover;}
+  .avatar.lg{width:84px;height:84px;font-size:28px;}
+  input[type=file]{font-size:12px;color:var(--text-muted);}
+ 
+  .ticket{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;overflow:hidden;}
+  .ticket .stamp{position:absolute;top:18px;right:-30px;transform:rotate(18deg);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;font-weight:700;padding:5px 38px;border:2px solid currentColor;border-radius:3px;text-transform:uppercase;}
   .stamp.pending{color:var(--amber);}
   .stamp.approved{color:var(--green);}
   .stamp.rejected{color:var(--red);}
+  .ticket-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+  .ticket-head .who b{display:block;font-size:18px;font-family:'Bebas Neue';letter-spacing:.02em;}
+  .ticket-head .who span{color:var(--text-muted);font-size:13px;font-family:'Space Mono',monospace;}
   .ticket dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:10px 0 0;font-size:14px;}
   .ticket dt{color:var(--text-muted);}
   .ticket dd{margin:0;}
-
-  /* ---- Leaderboard ---- */
-  .lb-row{
-    display:flex;align-items:center;gap:14px;
-    padding:12px 14px;
-    border:1px solid var(--line);
-    border-radius:10px;
-    margin-bottom:8px;
-    background:var(--surface);
-  }
+  .ticket .brandline{font-family:'Bebas Neue';color:var(--gold);font-size:13px;letter-spacing:.08em;margin-bottom:2px;}
+ 
+  .lb-row{display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--surface);}
   .lb-row.r1{border-left:4px solid var(--gold);}
   .lb-row.r2{border-left:4px solid var(--silver);}
   .lb-row.r3{border-left:4px solid var(--bronze);}
@@ -224,12 +95,13 @@
   .lb-chip{font-family:'Space Mono';font-size:10px;background:var(--bg-2);border:1px solid var(--line);border-radius:999px;padding:2px 7px;color:var(--text-muted);}
   .lb-chip.hit{color:var(--green);border-color:rgba(111,203,159,0.4);}
   .lb-points{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--gold);min-width:46px;text-align:right;}
-
+ 
   .pending-card{border:1px dashed var(--line);border-radius:10px;padding:14px;margin-bottom:10px;background:var(--bg-2);}
+  .pending-card.solidline{border-style:solid;}
   .pending-card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
   .pending-card .meta{font-size:13px;color:var(--text-muted);margin-top:4px;line-height:1.5;}
-  .pending-card .actions{display:flex;gap:8px;margin-top:10px;}
-
+  .pending-card .actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+ 
   .pin-box{max-width:280px;}
   .small-muted{color:var(--text-muted);font-size:12px;}
   .divider{border:none;border-top:1px solid var(--line);margin:26px 0;}
@@ -238,16 +110,16 @@
 </head>
 <body>
 <div class="wrap">
-
+ 
   <header class="topbar">
-    <div class="eyebrow">WhatsApp Group Pool · One entry per number</div>
-    <h1 class="title">FÚTBOL <span>2026</span></h1>
+    <div class="eyebrow">WhatsApp Group Pool &middot; One entry per number</div>
+    <h1 class="title">SEEKO WORLD CUP <span>2026</span></h1>
     <div class="subtitle">Lock in your picks before the trophy gets lifted in July.</div>
     <div class="legend">
       <span class="chip"><b>25</b> Champion</span>
       <span class="chip"><b>10</b> Runner-up</span>
       <span class="chip"><b>5</b> 3rd Place</span>
-      <span class="chip"><b>20</b> Final Score</span>
+      <span class="chip"><b>20</b> Final Score*</span>
       <span class="chip"><b>5</b> Golden Ball</span>
       <span class="chip"><b>5</b> Golden Boot</span>
       <span class="chip">= <b>70</b> total</span>
@@ -258,51 +130,64 @@
       <button data-tab="admin">ADMIN</button>
     </nav>
   </header>
-
+ 
   <main>
-    <!-- ================= SUBMIT ================= -->
     <section class="panel active" id="panel-submit">
       <h2 class="h">Lock in your prediction</h2>
-      <p class="hint">One WhatsApp number = one entry. Once submitted it's final, so double-check before sending.</p>
-
+      <p class="hint">One WhatsApp number = one entry. Once submitted it's final, so double-check before sending.<br>*Final score points only count if you also got Champion &amp; Runner-up right.</p>
+ 
       <form id="predict-form" class="card">
         <label for="f-name">Your name</label>
         <input type="text" id="f-name" placeholder="As it shows in the group">
-
+ 
+        <label>Profile photo (optional)</label>
+        <div class="photo-row">
+          <div class="avatar" id="photo-preview">?</div>
+          <input type="file" id="f-photo" accept="image/*">
+        </div>
+ 
         <label for="f-phone">WhatsApp number</label>
         <input type="tel" id="f-phone" placeholder="+91 9XXXXXXXXX">
-
+ 
         <label for="f-champion">Champion</label>
         <select id="f-champion"></select>
-
+ 
         <label for="f-runnerup">Runner-up</label>
         <select id="f-runnerup"></select>
-
+ 
         <label for="f-third">3rd place</label>
         <select id="f-third"></select>
-
+ 
         <label>Final score (your Champion vs your Runner-up)</label>
         <div class="score-pair">
           <input type="number" id="f-champ-goals" min="0" placeholder="Champion's goals">
-          <div class="vs">–</div>
+          <div class="vs">&ndash;</div>
           <input type="number" id="f-runner-goals" min="0" placeholder="Runner-up's goals">
         </div>
-
-        <label for="f-ball">Golden Ball (best player)</label>
-        <input type="text" id="f-ball" placeholder="Player name">
-
-        <label for="f-boot">Golden Boot (top scorer)</label>
-        <input type="text" id="f-boot" placeholder="Player name">
-
+ 
+        <label>Golden Ball (best player)</label>
+        <div class="row2">
+          <div><div class="col-label">Country</div><select id="f-ball-country"></select></div>
+          <div><div class="col-label">Player</div><select id="f-ball-player"></select></div>
+        </div>
+ 
+        <label>Golden Boot (top scorer)</label>
+        <div class="row2">
+          <div><div class="col-label">Country</div><select id="f-boot-country"></select></div>
+          <div><div class="col-label">Player</div><select id="f-boot-player"></select></div>
+        </div>
+ 
         <button type="submit" class="primary">Lock In My Prediction</button>
         <div class="msg" id="submit-msg"></div>
       </form>
-
-      <div class="ticket" id="confirm-ticket" style="display:none;"></div>
+ 
+      <div id="confirm-wrap" style="display:none;">
+        <div class="ticket" id="confirm-ticket"></div>
+        <button class="ghost" style="margin-top:12px;width:100%;" onclick="shareOrDownloadCard()">Save / Share Prediction Card</button>
+      </div>
       <p class="small-muted" id="entry-counter" style="margin-top:14px;"></p>
     </section>
-
-    <!-- ================= LEADERBOARD ================= -->
+ 
     <section class="panel" id="panel-leaderboard">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <h2 class="h">Leaderboard</h2>
@@ -311,12 +196,11 @@
       <p class="hint">Updates once results are entered by the admin.</p>
       <div id="leaderboard-content"></div>
     </section>
-
-    <!-- ================= ADMIN ================= -->
+ 
     <section class="panel" id="panel-admin">
       <div id="admin-locked">
         <h2 class="h">Admin access</h2>
-        <p class="hint">Review entries and enter final results here.</p>
+        <p class="hint">Review, edit and approve entries here.</p>
         <div class="card pin-box">
           <label for="admin-pin">PIN</label>
           <input type="text" id="admin-pin" placeholder="Enter PIN">
@@ -324,17 +208,17 @@
           <div class="msg" id="admin-pin-msg"></div>
         </div>
       </div>
-
+ 
       <div id="admin-unlocked" style="display:none;">
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <h2 class="h">Pending review</h2>
           <button class="ghost" onclick="loadAllAndRenderAdmin()">Refresh</button>
         </div>
         <div id="admin-pending"></div>
-
+ 
         <hr class="divider">
         <h2 class="h">Final results</h2>
-        <p class="hint">Enter the real outcome once it's known — scores recalculate automatically.</p>
+        <p class="hint">Enter the real outcome once it's known &mdash; scores recalculate automatically.</p>
         <form id="results-form" class="card">
           <label for="r-champion">Champion</label>
           <select id="r-champion"></select>
@@ -345,29 +229,33 @@
           <label>Final score</label>
           <div class="score-pair">
             <input type="number" id="r-champ-goals" min="0" placeholder="Champion's goals">
-            <div class="vs">–</div>
+            <div class="vs">&ndash;</div>
             <input type="number" id="r-runner-goals" min="0" placeholder="Runner-up's goals">
           </div>
-          <label for="r-ball">Golden Ball winner</label>
-          <input type="text" id="r-ball" placeholder="Player name">
-          <label for="r-boot">Golden Boot winner</label>
-          <input type="text" id="r-boot" placeholder="Player name">
+          <label>Golden Ball winner</label>
+          <div class="row2">
+            <div><div class="col-label">Country</div><select id="r-ball-country"></select></div>
+            <div><div class="col-label">Player</div><select id="r-ball-player"></select></div>
+          </div>
+          <label>Golden Boot winner</label>
+          <div class="row2">
+            <div><div class="col-label">Country</div><select id="r-boot-country"></select></div>
+            <div><div class="col-label">Player</div><select id="r-boot-player"></select></div>
+          </div>
           <button type="submit" class="primary">Save Results</button>
           <div class="msg" id="results-msg"></div>
         </form>
-
+ 
         <hr class="divider">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <h2 class="h">Confirmed entries</h2>
-        </div>
+        <h2 class="h">Confirmed entries</h2>
         <div id="admin-confirmed"></div>
       </div>
     </section>
   </main>
-
-  <footer>WORLD CUP 2026 PREDICTION POOL · BUILT FOR THE GROUP</footer>
+ 
+  <footer>SEEKO WORLD CUP 2026 PREDICTION POOL &middot; BUILT FOR THE GROUP</footer>
 </div>
-
+ 
 <script>
 // --- database shim ---
 const APP_KEY = "seekopredictwc_hashil_7fda7e";
@@ -391,7 +279,7 @@ window.storage = {
       const bytes = new TextEncoder().encode(value);
       const hexValue = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
       const res = await fetch(`https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${APP_KEY}/${key}/${hexValue}`, {
-        method: 'POST'
+        method: "POST"
       });
       return res.ok;
     } catch (e) {
@@ -402,15 +290,8 @@ window.storage = {
 };
 // --- end database shim ---
 
-/* =========================================================
-   CHANGE THIS before sharing the link with your group.
-   This PIN only hides the admin UI — it is not real security
-   (anyone who opens dev tools can still read/write the shared
-   storage directly). Fine for a friends pool, not for anything
-   sensitive.
-   ========================================================= */
 const ADMIN_PIN = "2026EE7";
-
+ 
 const TEAMS = [
   "Algeria","Argentina","Australia","Austria","Belgium","Bosnia and Herzegovina","Brazil",
   "Cabo Verde","Canada","Colombia","Congo DR","Croatia","Curaçao","Côte d'Ivoire","Czechia",
@@ -419,41 +300,91 @@ const TEAMS = [
   "Paraguay","Portugal","Qatar","Saudi Arabia","Scotland","Senegal","South Africa","Spain",
   "Sweden","Switzerland","Tunisia","Türkiye","USA","Uruguay","Uzbekistan"
 ];
-
+ 
+const SQUADS = {
+"Algeria": ["Oussama Benbot","Melvin Masstil","Luca Zidane","Achraf Abada","Rayan Ait Nouri","Zinedine Belaid","Rafik Belghali","Ramy Bensebaini","Samir Chergui","Jaouen Hadjam","Aissa Mandi","Mohamed Amine Tougai","Houssem Aouar","Nabil Bentaleb","Hicham Boudaoui","Fares Chaibi","Ibrahim Maza","Yassine Titraoui","Ramiz Zerrouki","Mohamed Amine Amoura","Nadir Benbouali","Adil Boulbina","Fares Ghedjemis","Amine Gouiri","Riyad Mahrez","Anis Hadj Moussa"],
+"Argentina": ["Emiliano Martínez","Gerónimo Rulli","Juan Musso","Gonzalo Montiel","Nahuel Molina","Lisandro Martínez","Nicolás Otamendi","Leonardo Balerdi","Cristian Romero","Facundo Medina","Nicolás Tagliafico","Leandro Paredes","Rodrigo De Paul","Exequiel Palacios","Enzo Fernández","Alexis Mac Allister","Giovani Lo Celso","Valentín Barco","Lionel Messi","Nico Paz","Thiago Almada","Nicolás González","Giuliano Simeone","Lautaro Martínez","Jose Manuel López","Julián Álvarez"],
+"Australia": ["Mathew Ryan","Paul Izzo","Patrick Beach","Jordan Bos","Aziz Behich","Harry Souttar","Alessandro Circati","Lucas Herrington","Cameron Burgess","Kai Trewin","Milos Degenek","Jason Geria","Jacob Italiano","Jackson Irvine","Aiden O'Neill","Paul Okon Jr","Cameron Devlin","Connor Metcalfe","Mathew Leckie","Nishan Velupillay","Cristian Volpato","Nestory Irankunda","Awer Mabil","Ajdin Hrustic","Mohamed Toure","Tete Yengi"],
+"Austria": ["Alexander Schlager","Florian Wiegele","Patrick Pentz","David Affengruber","Kevin Danso","Stefan Posch","David Alaba","Philipp Lienhart","Philipp Mwene","Alexander Prass","Marco Friedl","Michael Svoboda","Xaver Schlager","Nicolas Seiwald","Marcel Sabitzer","Florian Grillitsch","Carney Chukwuemeka","Romano Schmid","Christoph Baumgartner","Konrad Laimer","Patrick Wimmer","Paul Wanner","Alessandro Schopf","Marko Arnautovic","Michael Gregoritsch","Sasa Kalajdzic"],
+"Belgium": ["Thibaut Courtois","Senne Lammens","Mike Penders","Timothy Castagne","Zeno Debast","Maxim De Cuyper","Koni De Winter","Brandon Mechele","Thomas Meunier","Nathan Ngoy","Joaquin Seys","Arthur Theate","Kevin De Bruyne","Amadou Onana","Nicolas Raskin","Youri Tielemans","Hans Vanaken","Axel Witsel","Charles De Ketelaere","Jérémy Doku","Matias Fernandez-Pardo","Romelu Lukaku","Dodi Lukebakio","Diego Moreira","Alexis Saelemaekers","Leandro Trossard"],
+"Bosnia and Herzegovina": ["Nikola Vasilj","Martin Zlomislic","Osman Hadzikic","Sead Kolasinac","Amar Dedic","Nihad Mujakic","Nikola Katic","Tarik Muharemovic","Stjepan Radeljic","Dennis Hadzikadunic","Nidal Celik","Amir Hadziahmetovic","Ivan Sunjic","Ivan Basic","Dzenis Burnic","Ermin Mahmic","Benjamin Tahirovic","Amar Memic","Armin Gigovic","Kerim Alajbegovic","Esmir Bajraktarevic","Ermedin Demirovic","Jovo Lukic","Samed Bazdar","Haris Tabakovic","Edin Dzeko"],
+"Brazil": ["Alisson","Éderson","Weverton","Alex Sandro","Bremer","Danilo","Douglas Santos","Gabriel Magalhães","Léo Pereira","Marquinhos","Roger Ibañez","Wesley","Bruno Guimarães","Casemiro","Danilo Santos","Fabinho","Lucas Paquetá","Endrick","Gabriel Martinelli","Igor Thiago","Luiz Henrique","Matheus Cunha","Neymar","Raphinha","Rayan","Vinícius Júnior"],
+"Cabo Verde": ["Vozinha","Marcio Rosa","CJ dos Santos","Steven Moreira","Wagner Pina","Joao Paulo","Sidny Lopes Cabral","Logan Costa","Pico","Kelvin Pires","Stopira","Diney","Jamiro Monteiro","Telmo Arcanjo","Yannick Semedo","Laros Duarte","Deroy Duarte","Kevin Pina","Ryan Mendes","Willy Semedo","Garry Rodrigues","Jovane Cabral","Nuno da Costa","Dailon Livramento","Gilson Benchimol","Helio Varela"],
+"Canada": ["Dayne St. Clair","Maxime Crépeau","Owen Goodman","Moïse Bombito","Derek Cornelius","Alphonso Davies","Luc De Fougerolles","Alistair Johnston","Alfie Jones","Richie Laryea","Niko Sigur","Joel Waterman","Ali Ahmed","Tajon Buchanan","Mathieu Choinière","Stephen Eustáquio","Marcelo Flores","Ismaël Koné","Liam Millar","Jonathan Osorio","Nathan Saliba","Jacob Shaffelburg","Jonathan David","Promise David","Cyle Larin","Tani Oluwaseyi"],
+"Colombia": ["David Ospina","Álvaro Montero","Camilo Vargas","Daniel Muñoz","Jhon Lucumí","Santiago Arias","Davinson Sánchez","Johan Mojica","Yerry Mina","Willer Ditta","Deiver Machado","Jorge Carrascal","Kevin Castaño","Gustavo Puerta","Juan Fernando Quintero","Juan Portilla","Jefferson Lerma","Richard Ríos","Jhon Arias","James Rodríguez","Jaminton Campaz","Luis Díaz","Jhon Córdoba","Luis Suárez","Andrés Gómez","Cucho Hernández"],
+"Congo DR": ["Lionel Mpasi","Timothy Fayulu","Matthieu Epolo","Chancel Mbemba","Axel Tuanzebe","Arthur Masuaku","Gedeon Kalulu","Joris Kayembe","Aaron Wan-Bissaka","Aaron Tshibola","Steve Kapuadi","Dylan Batubinsika","Noah Sadiki","Charles Pickel","Edo Kayembe","Samuel Moutoussamy","Ngal'ayel Mukau","Nathanaël Mbuku","Meschak Elia","Brian Cipenga","Gaël Kakuta","Théo Bongonda","Simon Banza","Yoane Wissa","Fiston Mayele","Cédric Bakambu"],
+"Croatia": ["Dominik Livakovic","Dominik Kotarski","Ivor Pandur","Josko Gvardiol","Duje Caleta-Car","Josip Sutalo","Josip Stanisic","Marin Pongracic","Martin Erlic","Luka Vuskovic","Luka Modric","Mateo Kovacic","Mario Pasalic","Nikola Vlasic","Luka Sucic","Martin Baturina","Kristijan Jakic","Petar Sucic","Nikola Moro","Toni Fruk","Ivan Perisic","Andrej Kramaric","Ante Budimir","Marco Pasalic","Petar Musa","Igor Matanovic"],
+"Curaçao": ["Eloy Room","Tyrick Bodak","Trevor Doornbusch","Riechedly Bazoer","Joshua Brenet","Roshon van Eijma","Sherel Floranus","Deveron Fonville","Jurien Gaari","Armando Obispo","Shurandy Sambo","Juninho Bacuna","Leandro Bacuna","Livano Comenencia","Kevin Felida","Ar'jany Martha","Tyrese Noslin","Godfried Roemeratoe","Jeremy Antonisse","Tahith Chong","Kenji Gorre","Sontje Hansen","Gervane Kastaneer","Brandley Kuwas","Jurgen Locadia","Jearl Margaritha"],
+"Côte d'Ivoire": ["Yahia Fofana","Mohamed Koné","Alban Lafont","Emmanuel Agbadou","Clément Akpa","Ousmane Diomande","Guela Doué","Ghislain Konan","Odilon Kossounou","Evan Ndicka","Wilfried Singo","Seko Fofana","Parfait Guiagon","Franck Kessié","Christ Inao Oulaï","Ibrahim Sangaré","Jean Michaël Seri","Simon Adingra","Ange-Yoan Bonny","Amad Diallo","Oumar Diakité","Yan Diomande","Evann Guessand","Nicolas Pépé","Bazoumana Touré","Elye Wahi"],
+"Czechia": ["Lukas Hornicek","Jan Koutny","Jindrich Stanek","Vladimír Coufal","David Douděra","Tomáš Holeš","Robin Hranáč","Štěpán Chaloupek","David Jurásek","Ladislav Krejčí","Jaroslav Zelený","David Zima","Lukás Cerv","Vladimir Darida","Lukás Provod","Michal Sadílek","Hugo Sochůrek","Alexandr Sojka","Tomáš Souček","Adam Hložek","Tomáš Chorý","Mojmír Chytil","Jan Kuchta","Patrik Schick","Matej Vydra","Denis Višinský"],
+"Ecuador": ["Hernán Galíndez","Moisés Ramírez","Gonzalo Valle","Willian Pacho","Piero Hincapié","Joel Ordóñez","Félix Torres","Pervis Estupiñán","Yaimar Medina","Ángelo Preciado","Jackson Porozo","Alan Minda","Moisés Caicedo","Jordy Alcivar","Denil Castillo","John Yeboah","Alan Franco","Pedro Vite","Kendry Páez","Nilson Angulo","Gonzalo Plata","Kevin Rodríguez","Anthony Valencia","Enner Valencia","Jordy Caicedo","Jeremy Arévalo"],
+"Egypt": ["Mohamed El Shenawy","Mostafa Shobeir","El Mahdy Soliman","Mohamed Alaa","Mohamed Hany","Tarek Alaa","Hamdy Fathy","Ramy Rabia","Yasser Ibrahim","Hossam Abdelmaguid","Mohamed Abdelmonem","Ahmed Fatouh","Karim Hafez","Marwan Attia","Mohanad Lasheen","Nabil Emad","Mahmoud Saber","Ahmed Zizo","Emam Ashour","Mostafa Ziko","Mahmoud Trezeguet","Ibrahim Adel","Haissem Hassan","Omar Marmoush","Mohamed Salah","Hamza Abdelkarim"],
+"England": ["Jordan Pickford","Dean Henderson","James Trafford","Reece James","Ezri Konsa","Jarell Quansah","John Stones","Marc Guéhi","Dan Burn","Nico O'Reilly","Djed Spence","Tino Livramento","Declan Rice","Elliot Anderson","Kobbie Mainoo","Jordan Henderson","Morgan Rogers","Jude Bellingham","Eberechi Eze","Harry Kane","Ivan Toney","Ollie Watkins","Bukayo Saka","Marcus Rashford","Anthony Gordon","Noni Madueke"],
+"France": ["Mike Maignan","Robin Risser","Brice Samba","Lucas Digne","Malo Gusto","Lucas Hernández","Theo Hernández","Ibrahima Konaté","Jules Koundé","Maxence Lacroix","William Saliba","Dayot Upamecano","N'Golo Kanté","Manu Koné","Adrien Rabiot","Aurélien Tchouaméni","Warren Zaïre-Emery","Maghnes Akliouche","Bradley Barcola","Rayan Cherki","Ousmane Dembélé","Désiré Doué","Jean-Philippe Mateta","Kylian Mbappé","Michael Olise","Marcus Thuram"],
+"Germany": ["Oliver Baumann","Manuel Neuer","Alexander Nübel","Waldemar Anton","Nathaniel Brown","David Raum","Antonio Rüdiger","Nico Schlotterbeck","Jonathan Tah","Malick Thiaw","Pascal Gross","Joshua Kimmich","Felix Nmecha","Aleksandar Pavlovic","Angelo Stiller","Leon Goretzka","Florian Wirtz","Jamie Leweling","Maximilian Beier","Kai Havertz","Lennart Karl","Jamal Musiala","Leroy Sané","Deniz Undav","Nick Woltemade"],
+"Ghana": ["Benjamin Asare","Lawrence Ati-Zigi","Joseph Anang","Baba Abdul Rahman","Gideon Mensah","Marvin Senaya","Alidu Seidu","Abdul Mumin","Jerome Opoku","Jonas Adjetey","Kojo Oppong Peprah","Derrick Luckassen","Elisha Owusu","Thomas Partey","Kwasi Sibo","Augustine Boakye","Caleb Yirenkyi","Abdul Fatawu Issahaku","Kamal Deen Sulemana","Christopher Bonsu Baah","Ernest Nuamah","Antoine Semenyo","Brandon Thomas-Asante","Prince Kwabena Adu","Iñaki Williams","Jordan Ayew"],
+"Haiti": ["Johny Placide","Alexandre Pierre","Josue Duverger","Carlens Arcus","Wilguens Paugain","Duke Lacroix","Martin Expérience","Jean-Kévin Duverne","Ricardo Adé","Hannes Delcroix","Keeto Thermoncy","Carl Fred Sainté","Leverton Pierre","Danley Jean Jacques","Jean-Ricner Bellegarde","Woodensky Pierre","Dominique Simon","Don Deedson Louicius","Josué Casimir","Derrick Etienne","Ruben Providence","Duckens Nazon","Frantzdy Pierrot","Wilson Isidor","Yassin Fortuné","Lenny Joseph"],
+"IR Iran": ["Alireza Beiranvand","Hossein Hosseini","Payam Niazmand","Danial Eiri","Ehsan Hajsafi","Saleh Hardani","Hossein Kanaani","Shoka Khalilzadeh","Milad Mohammadi","Ali Nemati","Omid Noorafkan","Ramin Rezaeian","Rouzbeh Cheshmi","Saeid Ezatolahi","Mehdi Ghaedi","Saman Ghoddos","Mohammad Ghorbani","Alireza Jahanbakhsh","Mohammad Mohebi","Amir Mohammad Razzaghinia","Mehdi Torabi","Aria Yousefi","Ali Alipour","Dennis Dargahi","Amirhossein Hosseinzadeh","Amirhossein Mahmoudi","Mehdi Taremi"],
+"Iraq": ["Fahad Talib","Jalal Hassan","Ahmed Basil","Hussein Ali","Manaf Younis","Zaid Tahseen","Rebin Sulaka","Akam Hashem","Merchas Doski","Ahmed Yahya","Zaid Ismail","Frans Putros","Mustafa Saadoon","Amir Al-Ammari","Kevin Yakob","Zidane Iqbal","Aimar Sher","Ibrahim Bayesh","Ahmed Qasim","Youssef Amyn","Marko Farji","Ali Jasim","Ali Al-Hamadi","Ali Yousef","Aymen Hussein","Mohanad Ali"],
+"Japan": ["Zion Suzuki","Keisuke Osako","Tomoki Hayakawa","Yūto Nagatomo","Shogo Taniguchi","Ko Itakura","Tsuyoshi Watanabe","Takehiro Tomiyasu","Hiroki Ito","Ayumu Seko","Yukinari Sugawara","Junnosuke Suzuki","Wataru Endo","Junya Ito","Daichi Kamada","Ritsu Doan","Ao Tanaka","Keito Nakamura","Kaishu Sano","Takefusa Kubo","Yuito Suzuki","Koki Ogawa","Daizen Maeda","Ayase Ueda","Kento Shiogai","Keisuke Goto"],
+"Jordan": ["Yazid Abulaila","Abdallah Al-Fakhouri","Nour Bani Attiah","Ihsan Haddad","Saed Al-Rosan","Mohammad Abualnadi","Husam Abu Dahab","Mohammed Abu Hashish","Yazan Al-Arab","Anas Badawi","Abdallah Nasib","Saleem Obaid","Mohammed Al-Dawoud","Nizar Al-Rashdan","Noor Al-Rawabdeh","Rajaei Ayed","Amer Jamous","Ibrahim Sadeh","Mohannad Abu Taha","Mohammed Abu Zrayq","Mousa Al-Tamari","Ali Azaizeh","Odeh Al-Fakhouri","Ali Olwan","Ibrahim Sabra","Mahmoud Al-Mardi"],
+"Korea Republic": ["Jo Hyun-Woo","Kim Seung-Gyu","Song Bum-Keun","Kim Min-Jae","Jo Yu-Min","Lee Han-Beom","Kim Tae-Hyun","Park Jin-Seop","Lee Ki-Hyeok","Lee Tae-Seok","Seol Young-Woo","Jens Castrop","Kim Moon-Hwan","Yang Hyun-Jun","Paik Seung-Ho","Hwang In-Beom","Kim Jin-Kyu","Bae Jun-Ho","Um Ji-Sung","Hwang Hee-Chan","Lee Dong-Gyeong","Lee Jae-Sung","Lee Kang-In","Oh Hyun-Kyu","Son Heung-Min","Cho Kyu-Sung"],
+"Mexico": ["Carlos Acevedo","Guillermo Ochoa","Raúl Rangel","Jesús Gallardo","Israel Reyes","César Montes","Jorge Sánchez","Johan Vásquez","Mateo Chávez","Gilberto Mora","Edson Álvarez","Orbelín Pineda","Luis Romo","Brian Gutiérrez","Obed Vargas","César Huerta","Luis Chávez","Erik Lira","Álvaro Fidalgo","Roberto Alvarado","Armando González","Raúl Jiménez","Julián Quiñones","Santiago Gimenez","Guillermo Martínez","Alexis Vega"],
+"Morocco": ["Yassine Bounou","Munir El Kajoui","Reda Tagnaouti","Noussair Mazraoui","Anass Salah-Eddine","Youssef Belammari","Achraf Hakimi","Zakaria El Ouahdi","Chadi Riad","Nayef Aguerd","Redouane Halhal","Issa Diop","Samir El Mourabet","Ayyoub Bouaddi","Neil El Aynaoui","Sofyan Amrabat","Azzedine Ounahi","Bilal El Khannouss","Ismael Saibari","Abde Ezzalzouli","Chemsdine Talbi","Soufiane Rahimi","Ayoub El Kaabi","Brahim Díaz","Gessime Yassine","Ayoube Amaimouni"],
+"Netherlands": ["Mark Flekken","Robin Roefs","Bart Verbruggen","Nathan Aké","Denzel Dumfries","Jorrel Hato","Jurriën Timber","Jan Paul van Hecke","Micky van de Ven","Virgil van Dijk","Frenkie de Jong","Marten de Roon","Ryan Gravenberch","Teun Koopmeiners","Tijjani Reijnders","Guus Til","Quinten Timber","Mats Wieffer","Brian Brobbey","Memphis Depay","Cody Gakpo","Justin Kluivert","Noa Lang","Donyell Malen","Crysencio Summerville","Wout Weghorst"],
+"New Zealand": ["Max Crocombe","Alex Paulsen","Michael Woud","Tim Payne","Francis De Vries","Tyler Bindon","Michael Boxall","Liberato Cacace","Nando Pijnaker","Finn Surman","Callan Elliot","Tommy Smith","Joe Bell","Matt Garbett","Marko Stamenic","Sarpreet Singh","Alex Rufer","Ryan Thomas","Chris Wood","Eli Just","Kosta Barbarouses","Ben Waine","Ben Old","Callum McCowatt","Jesse Randall","Lachlan Bayliss"],
+"Norway": ["Ørjan Nyland","Egil Selvik","Sander Tangvik","Julian Ryerson","Kristoffer Ajer","Leo Østigård","David Møller Wolfe","Marcus Pedersen","Torbjørn Heggem","Fredrik André Bjørkan","Henrik Falchener","Sondre Langås","Martin Ødegaard","Sander Berge","Patrick Berg","Kristian Thorstvedt","Morten Thorsby","Thelo Aasgaard","Andreas Schjelderup","Jens Petter Hauge","Fredrik Aursnes","Oscar Bobb","Antonio Nusa","Erling Haaland","Alexander Sørloth","Jørgen Strand Larsen"],
+"Panama": ["Orlando Mosquera","Luis Mejía","César Samudio","Cesar Blackman","Jorge Gutierrez","Amir Murillo","Fidel Escobar","Andres Andrade","Edgardo Farina","Jose Cordoba","Eric Davis","Jiovany Ramos","Roderick Miller","Anibal Godoy","Adalberto Carrasquilla","Carlos Harvey","Cristian Martinez","Jose Luis Rodriguez","Cesar Yanis","Yoel Barcenas","Alberto Quintero","Azarias Londono","Ismael Diaz","Cecilio Waterman","Jose Fajardo","Tomas Rodriguez"],
+"Paraguay": ["Roberto Fernández","Orlando Gill","Gastón Olveira","Gustavo Gómez","Júnior Alonso","Fabián Balbuena","Omar Alderete","Juan Caceres","Jose Canale","Alexandro Maidana","Gustavo Velázquez","Miguel Almirón","Kaku","Andrés Cubas","Ramón Sosa","Diego Gómez","Damián Bobadilla","Braian Ojeda","Matías Galarza","Maurício","Antonio Sanabria","Julio Enciso","Gabriel Ávalos","Alex Arce","Isidro Pitta","Gustavo Caballero"],
+"Portugal": ["Diogo Costa","José Sá","Rui Silva","Ricardo Velho","Rúben Dias","João Cancelo","Diogo Dalot","Nuno Mendes","Nélson Semedo","Matheus Nunes","Gonçalo Inacio","Renato Veiga","Tomás Araújo","Bruno Fernandes","Bernardo Silva","Vitinha","João Neves","Rúben Neves","Samú Costa","Cristiano Ronaldo","Rafael Leão","João Félix","Gonçalo Ramos","Pedro Neto","Francisco Conceição","Gonçalo Guedes","Francisco Trincão"],
+"Qatar": ["Salah Zakaria","Meshaal Barsham","Mahmoud Abunada","Boualem Khoukhi","Pedro Miguel","Sultan Al Brake","Al-Hashmi Al-Hussain","Ayoub Al-Alawi","Issa Laye","Lucas Mendes","Homam Al-Amin","Ahmed Fathi","Jassim Gaber","Assim Madibo","Abdulaziz Hatem","Karim Boudiaf","Mohammed Mannai","Almoez Ali","Akram Afif","Tahsin Mohammed","Edmílson Junior","Ahmed Al-Ganehi","Ahmed Alaa","Hassan Al-Haydos","Mohammed Muntari","Yusuf Abdurisag"],
+"Saudi Arabia": ["Mohammed Al Owais","Nawaf Al Aqidi","Ahmed Al Kassar","Abdulelah Al Amri","Hassan Tambakti","Jehad Thikri","Ali Lajami","Hassan Kadesh","Saud Abdulhamid","Mohammed Abu Al Shamat","Ali Majrashi","Moteb Al Harbi","Nawaf Boushal","Sultan Al-Ghannam","Mohammed Kanno","Abdullah Al Khaibari","Ziyad Al Johani","Nasser Al Dawsari","Musab Al Juwayr","Alaa Al Hajji","Salem Al Dawsari","Khalid Al Ghannam","Ayman Yahya","Firas Al Buraikan","Saleh Al Shehri","Abdullah Al Hamdan"],
+"Scotland": ["Craig Gordon","Angus Gunn","Liam Kelly","Grant Hanley","Jack Hendry","Aaron Hickey","Dom Hyam","Scott McKenna","Nathan Patterson","Anthony Ralston","Andy Robertson","John Souttar","Kieran Tierney","Ryan Christie","Finlay Curtis","Lewis Ferguson","Ben Gannon-Doak","Billy Gilmour","John McGinn","Kenny McLean","Scott McTominay","Ché Adams","Lyndon Dykes","George Hirst","Lawrence Shankland","Ross Stewart"],
+"Senegal": ["Édouard Mendy","Mory Diaw","Yehvann Diouf","Krépin Diatta","Antoine Mendy","Kalidou Koulibaly","El Hadji Malick Diouf","Mamadou Sarr","Moussa Niakhaté","Abdoulaye Seck","Ismail Jakobs","Idrissa Gana Gueye","Pape Gueye","Lamine Camara","Habib Diarra","Pathé Ciss","Pape Matar Sarr","Bara Sapoko Ndiaye","Sadio Mané","Ismaïla Sarr","Iliman Ndiaye","Assane Diao","Ibrahim Mbaye","Nicolas Jackson","Bamba Dieng","Cherif Ndiaye"],
+"South Africa": ["Ronwen Williams","Ricardo Goss","Sipho Chaine","Khuliso Mudau","Nkosinathi Sibisi","Ime Okon","Khulumani Ndamane","Aubrey Modiba","Samukelo Kabini","Thabang Matuludi","Olwethu Makhanya","Kamgogelo Sebelebele","Bradley Cross","Mbekezeli Mbokazi","Teboho Mokoena","Thalente Mbatha","Yaya Sithole","Jayden Adams","Oswin Appollis","Iqraam Rayners","Tshepang Moremi","Relebohile Mofokeng","Evidence Makgopa","Themba Zwane","Lyle Foster","Thapelo Maseko"],
+"Spain": ["Unai Simón","David Raya","Joan García","Marc Cucurella","Pau Cubarsí","Aymeric Laporte","Álex Grimaldo","Pedro Porro","Eric García","Marcos Llorente","Marc Pubill","Gavi","Rodri","Pedri","Martín Zubimendi","Fabián Ruiz","Álex Baena","Mikel Merino","Lamine Yamal","Nico Williams","Dani Olmo","Ferran Torres","Mikel Oyarzabal","Yéremy Pino","Borja Iglesias","Víctor Muñoz"],
+"Sweden": ["Viktor Johansson","Kristoffer Nordfeldt","Jacob Widell Zetterstrom","Hjalmar Ekdal","Gabriel Gudmundsson","Isak Hien","Emil Holm","Gustaf Lagerbielke","Victor Lindelöf","Erik Smith","Carl Starfelt","Elliot Stroud","Daniel Svensson","Taha Ali","Yasin Ayari","Lucas Bergvall","Jesper Karlström","Ken Sema","Mattias Svanberg","Besfort Zeneli","Alexander Bernhardsson","Anthony Elanga","Viktor Gyökeres","Alexander Isak","Gustaf Nilsson","Benjamin Nygren"],
+"Switzerland": ["Gregor Kobel","Yvon Mvogo","Marvin Keller","Manuel Akanji","Nico Elvedi","Ricardo Rodriguez","Silvan Widmer","Miro Muheim","Aurèle Amenda","Eray Cömert","Luca Jaquez","Granit Xhaka","Johan Manzambi","Remo Freuler","Denis Zakaria","Ardon Jashari","Djibril Sow","Christian Fassnacht","Michel Aebischer","Fabian Rieder","Rubén Vargas","Breel Embolo","Noah Okafor","Dan Ndoye","Zeki Amdouni","Cedric Itten"],
+"Tunisia": ["Aymen Dahmen","Sabri Ben Hessen","Abdelmouhib Chamakh","Montassar Talbi","Dylan Bronn","Omar Rekik","Yan Valery","Ali Abdi","Moutaz Neffati","Raed Chikhaoui","Adam Arous","Mohamed Amine Ben Hamida","Ellyes Skhiri","Hannibal Mejbri","Anis Ben Slimane","Hadj Mahmoud","Rani Khedira","Mortadha Ben Ouanes","Elias Achouri","Ismaël Gharbi","Elias Saad","Sebastian Tounekti","Firas Chaouat","Khalil Ayari","Hazem Mastouri","Rayan Elloumi"],
+"Türkiye": ["Ugurcan Cakir","Mert Gunok","Altay Bayindir","Merih Demiral","Zeki Celik","Caglar Soyuncu","Mert Muldur","Ferdi Kadioglu","Ozan Kabak","Abdulkerim Bardakci","Eren Elmali","Samet Akaydin","Hakan Calhanoglou","Kaan Ayhan","Orkun Kokcu","Ismail Yuksek","Salih Ozcan","Kerem Akturkoglu","Irfan Can Kahveci","Baris Apler Yilmaz","Arda Guler","Kenan Yildiz","Yunus Akgun","Oguz Aydin","Deniz Gul","Can Uzun"],
+"USA": ["Chris Brady","Matt Freese","Matt Turner","Max Arfsten","Sergiño Dest","Alex Freeman","Mark McKenzie","Tim Ream","Chris Richards","Antonee Robinson","Miles Robinson","Joe Scally","Auston Trusty","Tyler Adams","Sebastian Berhalter","Weston McKennie","Cristian Roldan","Brenden Aaronson","Malik Tillman","Tim Weah","Alejandro Zendejas","Christian Pulisic","Gio Reyna","Folarin Balogun","Ricardo Pepi","Haji Wright"],
+"Uruguay": ["Fernando Muslera","Sergio Rochet","Santiago Mele","Ronald Araújo","José María Giménez","Santiago Bueno","Sebastián Cáceres","Mathías Olivera","Guillermo Varela","Matías Viña","Joaquín Piquerez","Juan Manuel Sanabria","Federico Valverde","Rodrigo Bentancur","Manuel Ugarte","Emiliano Martínez","Rodrigo Zalazar","Giorgian De Arrascaeta","Nicolás De La Cruz","Agustín Canobbio","Maximiliano Araújo","Brian Rodríguez","Facundo Pellistri","Darwin Núñez","Federico Viñas","Rodrigo Aguirre"],
+"Uzbekistan": ["Utkir Yusupov","Botirali Ergashev","Abduvokhid Nematov","Avazbek Ulmasaliev","Jakhongir Urozov","Rustamjon Ashurmatov","Umarbek Eshmurodov","Abdukodir Khusanov","Abdulla Abdullaev","Farrukh Sayfiev","Khojiakbar Alijonov","Sherzod Nasrullaev","Behruz Karimov","Sherzod Esanov","Umarali Rakhmonaliev","Akmal Mozgovoy","Otabek Shukurov","Jamshid Iskanderov","Azizjon Ganiev","Abbosek Fayzullaev","Jaloliddin Masharipov","Dostonbek Khamdamov","Oston Urunov","Azizbek Amonov","Igor Sergeev","Eldor Shomurodov"]
+};
+ 
 const PRED_KEY = "wc26_predictions";
 const RESULTS_KEY = "wc26_results";
-
+const PHOTO_PREFIX = "wc26_photo_";
+ 
 let predictions = {};
 let results = null;
 let adminUnlocked = false;
-
-/* ---------------- storage helpers ---------------- */
+let editingKey = null;
+let currentPhotoDataUrl = null;
+let lastSubmittedEntry = null;
+ 
 async function loadPredictions(){
-  try{
-    const r = await window.storage.get(PRED_KEY, true);
-    predictions = r && r.value ? JSON.parse(r.value) : {};
-  }catch(e){ predictions = {}; }
+  try{ const r = await window.storage.get(PRED_KEY, true); predictions = r && r.value ? JSON.parse(r.value) : {}; }
+  catch(e){ predictions = {}; }
 }
-async function savePredictions(){
-  await window.storage.set(PRED_KEY, JSON.stringify(predictions), true);
-}
+async function savePredictions(){ await window.storage.set(PRED_KEY, JSON.stringify(predictions), true); }
 async function loadResults(){
-  try{
-    const r = await window.storage.get(RESULTS_KEY, true);
-    results = r && r.value ? JSON.parse(r.value) : null;
-  }catch(e){ results = null; }
+  try{ const r = await window.storage.get(RESULTS_KEY, true); results = r && r.value ? JSON.parse(r.value) : null; }
+  catch(e){ results = null; }
 }
-async function saveResults(obj){
-  results = obj;
-  await window.storage.set(RESULTS_KEY, JSON.stringify(obj), true);
+async function saveResults(obj){ results = obj; await window.storage.set(RESULTS_KEY, JSON.stringify(obj), true); }
+async function savePhoto(phoneKey, dataUrl){
+  try{ if(dataUrl) await window.storage.set(PHOTO_PREFIX+phoneKey, dataUrl, true); }catch(e){}
 }
-
+ 
 function normalizePhone(p){
   const digits = (p || "").replace(/\D/g,"");
-  return digits.slice(-9); // last 9 digits, robust to country-code formatting differences
+  return digits.slice(-9);
 }
-
-/* ---------------- tabs ---------------- */
+function getInitials(name){
+  return (name||"").trim().split(/\s+/).slice(0,2).map(w=>w[0]?w[0].toUpperCase():"").join("") || "?";
+}
+ 
 document.querySelectorAll("nav.tabs button").forEach(btn=>{
   btn.addEventListener("click", ()=> switchTab(btn.dataset.tab));
 });
@@ -465,11 +396,11 @@ function switchTab(tab){
   if(tab==="submit") renderEntryCounter();
   if(tab==="admin" && adminUnlocked) loadAllAndRenderAdmin();
 }
-
-/* ---------------- populate selects ---------------- */
-function fillTeamSelect(sel){
+ 
+function fillTeamSelect(sel, label){
+  sel.innerHTML = "";
   const blank = document.createElement("option");
-  blank.value=""; blank.textContent="Select a team";
+  blank.value=""; blank.textContent = label || "Select a team";
   sel.appendChild(blank);
   TEAMS.forEach(t=>{
     const o = document.createElement("option");
@@ -477,21 +408,81 @@ function fillTeamSelect(sel){
     sel.appendChild(o);
   });
 }
+function populatePlayerSelect(sel, country){
+  sel.innerHTML = "";
+  const blank = document.createElement("option");
+  blank.value=""; blank.textContent = country ? "Select a player" : "Select country first";
+  sel.appendChild(blank);
+  if(country && SQUADS[country]){
+    SQUADS[country].slice().sort((a,b)=>a.localeCompare(b)).forEach(p=>{
+      const o = document.createElement("option");
+      o.value=p; o.textContent=p;
+      sel.appendChild(o);
+    });
+  }
+  sel.disabled = !country;
+}
+function wireCascade(countryId, playerId){
+  const c = document.getElementById(countryId);
+  const p = document.getElementById(playerId);
+  c.addEventListener("change", ()=> populatePlayerSelect(p, c.value));
+}
+ 
 ["f-champion","f-runnerup","f-third","r-champion","r-runnerup","r-third"].forEach(id=>{
   fillTeamSelect(document.getElementById(id));
 });
-
-/* ---------------- submit flow ---------------- */
-const submitMsg = document.getElementById("submit-msg");
-function showMsg(el, text, ok){
-  el.textContent = text;
-  el.className = "msg show " + (ok ? "ok" : "error");
+["f-ball-country","f-boot-country","r-ball-country","r-boot-country"].forEach(id=>{
+  fillTeamSelect(document.getElementById(id), "Select a country");
+});
+["f-ball-player","f-boot-player","r-ball-player","r-boot-player"].forEach(id=>{
+  populatePlayerSelect(document.getElementById(id), "");
+});
+wireCascade("f-ball-country","f-ball-player");
+wireCascade("f-boot-country","f-boot-player");
+wireCascade("r-ball-country","r-ball-player");
+wireCascade("r-boot-country","r-boot-player");
+ 
+function resizeImageFile(file, maxDim, quality){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let w = img.width, h = img.height;
+        if(w>h){ if(w>maxDim){ h = Math.round(h*maxDim/w); w = maxDim; } }
+        else { if(h>maxDim){ w = Math.round(w*maxDim/h); h = maxDim; } }
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
-
+document.getElementById("f-photo").addEventListener("change", async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    currentPhotoDataUrl = await resizeImageFile(file, 260, 0.78);
+    const preview = document.getElementById("photo-preview");
+    preview.innerHTML = "";
+    const img = document.createElement("img");
+    img.src = currentPhotoDataUrl;
+    preview.appendChild(img);
+  }catch(err){ currentPhotoDataUrl = null; }
+});
+ 
+const submitMsg = document.getElementById("submit-msg");
+function showMsg(el, text, ok){ el.textContent = text; el.className = "msg show " + (ok ? "ok" : "error"); }
+ 
 document.getElementById("predict-form").addEventListener("submit", async (e)=>{
   e.preventDefault();
   submitMsg.className = "msg";
-
+ 
   const name = document.getElementById("f-name").value.trim();
   const phoneRaw = document.getElementById("f-phone").value.trim();
   const champion = document.getElementById("f-champion").value;
@@ -499,68 +490,86 @@ document.getElementById("predict-form").addEventListener("submit", async (e)=>{
   const third = document.getElementById("f-third").value;
   const champGoals = document.getElementById("f-champ-goals").value;
   const runnerGoals = document.getElementById("f-runner-goals").value;
-  const ball = document.getElementById("f-ball").value.trim();
-  const boot = document.getElementById("f-boot").value.trim();
-
+  const ballCountry = document.getElementById("f-ball-country").value;
+  const ballPlayer = document.getElementById("f-ball-player").value;
+  const bootCountry = document.getElementById("f-boot-country").value;
+  const bootPlayer = document.getElementById("f-boot-player").value;
+ 
   if(!name){ showMsg(submitMsg,"Enter your name.",false); return; }
   const phoneKey = normalizePhone(phoneRaw);
   if(phoneKey.length < 6){ showMsg(submitMsg,"Enter a valid WhatsApp number.",false); return; }
   if(!champion || !runnerup || !third){ showMsg(submitMsg,"Pick all three placements.",false); return; }
   if(champion===runnerup || champion===third || runnerup===third){ showMsg(submitMsg,"Champion, Runner-up and 3rd place must be three different teams.",false); return; }
   if(champGoals==="" || runnerGoals==="" || Number(champGoals)<0 || Number(runnerGoals)<0){ showMsg(submitMsg,"Enter a final score for both teams.",false); return; }
-  if(!ball || !boot){ showMsg(submitMsg,"Enter both Golden Ball and Golden Boot picks.",false); return; }
-
+  if(!ballCountry || !ballPlayer){ showMsg(submitMsg,"Pick a Golden Ball country and player.",false); return; }
+  if(!bootCountry || !bootPlayer){ showMsg(submitMsg,"Pick a Golden Boot country and player.",false); return; }
+ 
   await loadPredictions();
   const existing = predictions[phoneKey];
   if(existing && (existing.status==="pending" || existing.status==="approved")){
-    showMsg(submitMsg, "This WhatsApp number already has a submission (" + existing.status + "). One entry per number — ask the admin if you need it corrected.", false);
+    showMsg(submitMsg, "This WhatsApp number already has a submission (" + existing.status + "). One entry per number -- ask the admin if you need it corrected.", false);
     return;
   }
-
+ 
   const entry = {
     name, phone: phoneRaw, champion, runnerUp: runnerup, secondRunnerUp: third,
     champGoals: Number(champGoals), runnerGoals: Number(runnerGoals),
-    goldenBall: ball, goldenBoot: boot,
+    goldenBall: ballPlayer, goldenBallCountry: ballCountry,
+    goldenBoot: bootPlayer, goldenBootCountry: bootCountry,
     status: "pending", submittedAt: new Date().toISOString()
   };
   predictions[phoneKey] = entry;
-  try{
-    await savePredictions();
-  }catch(err){
-    showMsg(submitMsg,"Couldn't save — check your connection and try again.",false);
-    return;
-  }
-
+  try{ await savePredictions(); }
+  catch(err){ showMsg(submitMsg,"Couldn't save -- check your connection and try again.",false); return; }
+ 
+  await savePhoto(phoneKey, currentPhotoDataUrl);
+ 
   document.getElementById("predict-form").style.display = "none";
-  renderConfirmTicket(entry);
+  lastSubmittedEntry = entry;
+  renderConfirmTicket(entry, currentPhotoDataUrl);
   renderEntryCounter();
 });
-
-function renderConfirmTicket(entry){
+ 
+function renderConfirmTicket(entry, photoDataUrl){
+  document.getElementById("confirm-wrap").style.display = "block";
   const box = document.getElementById("confirm-ticket");
-  box.style.display = "block";
   box.innerHTML = "";
+ 
   const stamp = document.createElement("div");
-  stamp.className = "stamp pending";
-  stamp.textContent = "Pending review";
+  stamp.className = "stamp " + entry.status;
+  stamp.textContent = entry.status === "pending" ? "Pending review" : entry.status;
   box.appendChild(stamp);
-
-  const h = document.createElement("h2");
-  h.className = "h"; h.textContent = "You're in, " + entry.name;
-  box.appendChild(h);
-  const p = document.createElement("p");
-  p.className = "small-muted";
-  p.textContent = "The admin will confirm your entry on WhatsApp shortly.";
-  box.appendChild(p);
-
+ 
+  const brand = document.createElement("div");
+  brand.className = "brandline";
+  brand.textContent = "SEEKO WORLD CUP 2026";
+  box.appendChild(brand);
+ 
+  const head = document.createElement("div");
+  head.className = "ticket-head";
+  const avatar = document.createElement("div");
+  avatar.className = "avatar lg";
+  if(photoDataUrl){
+    const img = document.createElement("img"); img.src = photoDataUrl; avatar.appendChild(img);
+  } else {
+    avatar.textContent = getInitials(entry.name);
+  }
+  const who = document.createElement("div");
+  who.className = "who";
+  const b = document.createElement("b"); b.textContent = entry.name;
+  const span = document.createElement("span"); span.textContent = entry.phone;
+  who.appendChild(b); who.appendChild(span);
+  head.appendChild(avatar); head.appendChild(who);
+  box.appendChild(head);
+ 
   const dl = document.createElement("dl");
   const rows = [
     ["Champion", entry.champion],
     ["Runner-up", entry.runnerUp],
     ["3rd place", entry.secondRunnerUp],
-    ["Final score", entry.champGoals + " – " + entry.runnerGoals],
-    ["Golden Ball", entry.goldenBall],
-    ["Golden Boot", entry.goldenBoot]
+    ["Final score", entry.champGoals + " - " + entry.runnerGoals],
+    ["Golden Ball", entry.goldenBall + " (" + entry.goldenBallCountry + ")"],
+    ["Golden Boot", entry.goldenBoot + " (" + entry.goldenBootCountry + ")"]
   ];
   rows.forEach(([k,v])=>{
     const dt=document.createElement("dt"); dt.textContent=k;
@@ -569,7 +578,27 @@ function renderConfirmTicket(entry){
   });
   box.appendChild(dl);
 }
-
+ 
+async function shareOrDownloadCard(){
+  const node = document.getElementById("confirm-ticket");
+  if(!node || typeof html2canvas === "undefined") return;
+  const canvas = await html2canvas(node, {backgroundColor: "#18271E", scale: 2});
+  const filename = ((lastSubmittedEntry && lastSubmittedEntry.name) || "prediction").replace(/\s+/g,"_") + "_seeko_wc26.png";
+  canvas.toBlob(async (blob)=>{
+    try{
+      const file = new File([blob], filename, {type:"image/png"});
+      if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title:"My Seeko World Cup 2026 Prediction"});
+        return;
+      }
+    }catch(e){ /* fall through to download */ }
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = URL.createObjectURL(blob);
+    link.click();
+  }, "image/png");
+}
+ 
 async function renderEntryCounter(){
   await loadPredictions();
   const approved = Object.values(predictions).filter(p=>p.status==="approved").length;
@@ -577,46 +606,39 @@ async function renderEntryCounter(){
   document.getElementById("entry-counter").textContent =
     approved + " confirmed entries" + (pending ? " · " + pending + " awaiting review" : "");
 }
-
-/* ---------------- scoring ---------------- */
+ 
 function computeScore(entry, res){
   if(!res) return null;
   const hits = {};
   hits.champion = entry.champion === res.champion ? 25 : 0;
   hits.runnerUp = entry.runnerUp === res.runnerUp ? 10 : 0;
   hits.third = entry.secondRunnerUp === res.secondRunnerUp ? 5 : 0;
-  const finalMatch = entry.champion===res.champion && entry.runnerUp===res.runnerUp &&
-    Number(entry.champGoals)===Number(res.champGoals) && Number(entry.runnerGoals)===Number(res.runnerGoals);
-  hits.finalScore = finalMatch ? 20 : 0;
-  hits.ball = (entry.goldenBall||"").trim().toLowerCase() === (res.goldenBall||"").trim().toLowerCase() && res.goldenBall ? 5 : 0;
-  hits.boot = (entry.goldenBoot||"").trim().toLowerCase() === (res.goldenBoot||"").trim().toLowerCase() && res.goldenBoot ? 5 : 0;
+  const placementsCorrect = entry.champion===res.champion && entry.runnerUp===res.runnerUp;
+  const scoreMatches = Number(entry.champGoals)===Number(res.champGoals) && Number(entry.runnerGoals)===Number(res.runnerGoals);
+  hits.finalScore = (placementsCorrect && scoreMatches) ? 20 : 0;
+  hits.ball = (res.goldenBall && (entry.goldenBall||"").trim().toLowerCase() === (res.goldenBall||"").trim().toLowerCase()) ? 5 : 0;
+  hits.boot = (res.goldenBoot && (entry.goldenBoot||"").trim().toLowerCase() === (res.goldenBoot||"").trim().toLowerCase()) ? 5 : 0;
   const total = hits.champion+hits.runnerUp+hits.third+hits.finalScore+hits.ball+hits.boot;
   return {total, hits};
 }
-
-/* ---------------- leaderboard ---------------- */
+ 
 async function renderLeaderboard(){
   const container = document.getElementById("leaderboard-content");
   container.innerHTML = "<p class='small-muted'>Loading…</p>";
   await loadPredictions();
   await loadResults();
-
+ 
   const approvedEntries = Object.values(predictions).filter(p=>p.status==="approved");
   container.innerHTML = "";
-
+ 
   if(!results){
-    if(approvedEntries.length===0){
-      container.innerHTML = "<p class='small-muted'>No confirmed entries yet.</p>";
-      return;
-    }
+    if(approvedEntries.length===0){ container.innerHTML = "<p class='small-muted'>No confirmed entries yet.</p>"; return; }
     const p = document.createElement("p");
     p.className = "small-muted";
     p.textContent = approvedEntries.length + " confirmed entries. Scores will appear here once results are entered.";
     container.appendChild(p);
-    const names = [...approvedEntries].sort((a,b)=>a.name.localeCompare(b.name));
-    names.forEach(n=>{
-      const row = document.createElement("div");
-      row.className = "lb-row";
+    [...approvedEntries].sort((a,b)=>a.name.localeCompare(b.name)).forEach(n=>{
+      const row = document.createElement("div"); row.className = "lb-row";
       const rank = document.createElement("div"); rank.className="lb-rank"; rank.textContent="•";
       const nameBox = document.createElement("div"); nameBox.className="lb-name";
       const b = document.createElement("b"); b.textContent = n.name;
@@ -626,10 +648,10 @@ async function renderLeaderboard(){
     });
     return;
   }
-
+ 
   const scored = approvedEntries.map(e=>({entry:e, ...computeScore(e, results)}));
   scored.sort((a,b)=>b.total-a.total);
-
+ 
   scored.forEach((s, idx)=>{
     const row = document.createElement("div");
     row.className = "lb-row" + (idx===0?" r1":idx===1?" r2":idx===2?" r3":"");
@@ -638,11 +660,9 @@ async function renderLeaderboard(){
     const b = document.createElement("b"); b.textContent = s.entry.name;
     nameBox.appendChild(b);
     const chips = document.createElement("div"); chips.className="lb-chips";
-    const chipDefs = [
-      ["Champion", s.hits.champion], ["Runner-up", s.hits.runnerUp], ["3rd", s.hits.third],
-      ["Final score", s.hits.finalScore], ["Ball", s.hits.ball], ["Boot", s.hits.boot]
-    ];
-    chipDefs.forEach(([label, pts])=>{
+    [["Champion", s.hits.champion], ["Runner-up", s.hits.runnerUp], ["3rd", s.hits.third],
+     ["Final score", s.hits.finalScore], ["Ball", s.hits.ball], ["Boot", s.hits.boot]
+    ].forEach(([label, pts])=>{
       const c = document.createElement("span");
       c.className = "lb-chip" + (pts>0?" hit":"");
       c.textContent = label + (pts>0?" +"+pts:"");
@@ -654,8 +674,7 @@ async function renderLeaderboard(){
     container.appendChild(row);
   });
 }
-
-/* ---------------- admin ---------------- */
+ 
 function unlockAdmin(){
   const val = document.getElementById("admin-pin").value;
   const msg = document.getElementById("admin-pin-msg");
@@ -664,11 +683,9 @@ function unlockAdmin(){
     document.getElementById("admin-locked").style.display="none";
     document.getElementById("admin-unlocked").style.display="block";
     loadAllAndRenderAdmin();
-  }else{
-    showMsg(msg, "Wrong PIN.", false);
-  }
+  }else{ showMsg(msg, "Wrong PIN.", false); }
 }
-
+ 
 async function loadAllAndRenderAdmin(){
   await loadPredictions();
   await loadResults();
@@ -676,77 +693,152 @@ async function loadAllAndRenderAdmin(){
   renderConfirmedAdmin();
   fillResultsForm();
 }
-
+ 
+function entryMetaLine(e){
+  return e.champion + " > " + e.runnerUp + " > " + e.secondRunnerUp +
+    " | Final " + e.champGoals + "-" + e.runnerGoals +
+    " | Ball: " + e.goldenBall + " (" + (e.goldenBallCountry||"-") + ")" +
+    " | Boot: " + e.goldenBoot + " (" + (e.goldenBootCountry||"-") + ")";
+}
+ 
 function renderPending(){
   const box = document.getElementById("admin-pending");
   box.innerHTML = "";
   const pending = Object.entries(predictions).filter(([k,v])=>v.status==="pending");
-  if(pending.length===0){
-    box.innerHTML = "<p class='small-muted'>Nothing waiting for review.</p>";
-    return;
-  }
+  if(pending.length===0){ box.innerHTML = "<p class='small-muted'>Nothing waiting for review.</p>"; return; }
   pending.forEach(([key, e])=>{
-    const card = document.createElement("div");
-    card.className = "pending-card";
-    const top = document.createElement("div"); top.className="top";
-    const nameEl = document.createElement("b"); nameEl.textContent = e.name + " — " + e.phone;
-    top.appendChild(nameEl);
-    card.appendChild(top);
-
-    const meta = document.createElement("div"); meta.className="meta";
-    meta.textContent = e.champion + " > " + e.runnerUp + " > " + e.secondRunnerUp +
-      " | Final " + e.champGoals + "-" + e.runnerGoals +
-      " | Ball: " + e.goldenBall + " | Boot: " + e.goldenBoot;
-    card.appendChild(meta);
-
-    const actions = document.createElement("div"); actions.className="actions";
-    const approveBtn = document.createElement("button"); approveBtn.className="approve"; approveBtn.textContent="Approve";
-    approveBtn.onclick = ()=>approveEntry(key);
-    const rejectBtn = document.createElement("button"); rejectBtn.className="reject"; rejectBtn.textContent="Reject";
-    rejectBtn.onclick = ()=>rejectEntry(key);
-    actions.appendChild(approveBtn); actions.appendChild(rejectBtn);
-    card.appendChild(actions);
-
-    box.appendChild(card);
+    box.appendChild(editingKey===key ? buildEditCard(key, e) : buildPendingDisplayCard(key, e));
   });
 }
-
-async function approveEntry(key){
-  predictions[key].status = "approved";
-  await savePredictions();
-  loadAllAndRenderAdmin();
+ 
+function buildPendingDisplayCard(key, e){
+  const card = document.createElement("div");
+  card.className = "pending-card";
+  const top = document.createElement("div"); top.className="top";
+  const nameEl = document.createElement("b"); nameEl.textContent = e.name + " — " + e.phone;
+  top.appendChild(nameEl);
+  card.appendChild(top);
+  const meta = document.createElement("div"); meta.className="meta"; meta.textContent = entryMetaLine(e);
+  card.appendChild(meta);
+  const actions = document.createElement("div"); actions.className="actions";
+  const approveBtn = document.createElement("button"); approveBtn.className="approve"; approveBtn.textContent="Approve";
+  approveBtn.onclick = ()=>approveEntry(key);
+  const rejectBtn = document.createElement("button"); rejectBtn.className="reject"; rejectBtn.textContent="Reject";
+  rejectBtn.onclick = ()=>rejectEntry(key);
+  const editBtn = document.createElement("button"); editBtn.className="editbtn"; editBtn.textContent="Edit";
+  editBtn.onclick = ()=>{ editingKey=key; renderPending(); renderConfirmedAdmin(); };
+  actions.appendChild(approveBtn); actions.appendChild(rejectBtn); actions.appendChild(editBtn);
+  card.appendChild(actions);
+  return card;
 }
-async function rejectEntry(key){
-  predictions[key].status = "rejected"; // frees the number for resubmission
-  await savePredictions();
-  loadAllAndRenderAdmin();
-}
-
+ 
+async function approveEntry(key){ predictions[key].status = "approved"; await savePredictions(); loadAllAndRenderAdmin(); }
+async function rejectEntry(key){ predictions[key].status = "rejected"; await savePredictions(); loadAllAndRenderAdmin(); }
+ 
 function renderConfirmedAdmin(){
   const box = document.getElementById("admin-confirmed");
   box.innerHTML = "";
-  const confirmed = Object.values(predictions).filter(p=>p.status==="approved");
-  const p = document.createElement("p");
-  p.className = "small-muted";
-  p.textContent = confirmed.length + " confirmed so far.";
+  const confirmed = Object.entries(predictions).filter(([k,v])=>v.status==="approved");
+  const p = document.createElement("p"); p.className = "small-muted"; p.textContent = confirmed.length + " confirmed so far.";
   box.appendChild(p);
-  confirmed.sort((a,b)=>a.name.localeCompare(b.name)).forEach(e=>{
-    const row = document.createElement("div");
-    row.className = "pending-card";
-    row.style.borderStyle = "solid";
-    const meta = document.createElement("div"); meta.className="meta";
-    meta.innerHTML = "";
-    const nameEl = document.createElement("b"); nameEl.textContent = e.name + " — " + e.phone;
-    row.appendChild(nameEl);
-    const detail = document.createElement("div"); detail.className="meta";
-    detail.textContent = e.champion + " > " + e.runnerUp + " > " + e.secondRunnerUp +
-      " | Final " + e.champGoals + "-" + e.runnerGoals +
-      " | Ball: " + e.goldenBall + " | Boot: " + e.goldenBoot;
-    row.appendChild(detail);
-    box.appendChild(row);
+  confirmed.sort((a,b)=>a[1].name.localeCompare(b[1].name)).forEach(([key,e])=>{
+    box.appendChild(editingKey===key ? buildEditCard(key, e) : buildConfirmedDisplayCard(key, e));
   });
 }
-
+ 
+function buildConfirmedDisplayCard(key, e){
+  const row = document.createElement("div");
+  row.className = "pending-card solidline";
+  const nameEl = document.createElement("b"); nameEl.textContent = e.name + " — " + e.phone;
+  row.appendChild(nameEl);
+  const detail = document.createElement("div"); detail.className="meta"; detail.textContent = entryMetaLine(e);
+  row.appendChild(detail);
+  const actions = document.createElement("div"); actions.className="actions";
+  const editBtn = document.createElement("button"); editBtn.className="editbtn"; editBtn.textContent="Edit";
+  editBtn.onclick = ()=>{ editingKey=key; renderPending(); renderConfirmedAdmin(); };
+  actions.appendChild(editBtn);
+  row.appendChild(actions);
+  return row;
+}
+ 
+function buildEditCard(key, e){
+  const card = document.createElement("div");
+  card.className = "pending-card solidline";
+  const safe = "edit-" + key;
+ 
+  function fieldRow(labelText, inputEl){
+    const wrap = document.createElement("div");
+    const lab = document.createElement("div"); lab.className="col-label"; lab.textContent = labelText;
+    wrap.appendChild(lab); wrap.appendChild(inputEl);
+    wrap.style.marginBottom = "10px";
+    return wrap;
+  }
+ 
+  const nameInput = document.createElement("input"); nameInput.type="text"; nameInput.id=safe+"-name"; nameInput.value=e.name;
+  const phoneInput = document.createElement("input"); phoneInput.type="text"; phoneInput.id=safe+"-phone"; phoneInput.value=e.phone;
+  card.appendChild(fieldRow("Name", nameInput));
+  card.appendChild(fieldRow("WhatsApp number", phoneInput));
+ 
+  const champSel = document.createElement("select"); champSel.id=safe+"-champion"; fillTeamSelect(champSel); champSel.value=e.champion;
+  const runnerSel = document.createElement("select"); runnerSel.id=safe+"-runnerup"; fillTeamSelect(runnerSel); runnerSel.value=e.runnerUp;
+  const thirdSel = document.createElement("select"); thirdSel.id=safe+"-third"; fillTeamSelect(thirdSel); thirdSel.value=e.secondRunnerUp;
+  card.appendChild(fieldRow("Champion", champSel));
+  card.appendChild(fieldRow("Runner-up", runnerSel));
+  card.appendChild(fieldRow("3rd place", thirdSel));
+ 
+  const goalsWrap = document.createElement("div"); goalsWrap.className="row2"; goalsWrap.style.marginBottom="10px";
+  const champGoalsInput = document.createElement("input"); champGoalsInput.type="number"; champGoalsInput.id=safe+"-champgoals"; champGoalsInput.value=e.champGoals;
+  const runnerGoalsInput = document.createElement("input"); runnerGoalsInput.type="number"; runnerGoalsInput.id=safe+"-runnergoals"; runnerGoalsInput.value=e.runnerGoals;
+  goalsWrap.appendChild(champGoalsInput); goalsWrap.appendChild(runnerGoalsInput);
+  card.appendChild(fieldRow("Final score (champion - runner-up)", goalsWrap));
+ 
+  const ballWrap = document.createElement("div"); ballWrap.className="row2"; ballWrap.style.marginBottom="10px";
+  const ballCountrySel = document.createElement("select"); ballCountrySel.id=safe+"-ballcountry"; fillTeamSelect(ballCountrySel,"Select a country"); ballCountrySel.value=e.goldenBallCountry||"";
+  const ballPlayerSel = document.createElement("select"); ballPlayerSel.id=safe+"-ballplayer";
+  populatePlayerSelect(ballPlayerSel, ballCountrySel.value); ballPlayerSel.value=e.goldenBall||"";
+  ballCountrySel.addEventListener("change", ()=>populatePlayerSelect(ballPlayerSel, ballCountrySel.value));
+  ballWrap.appendChild(ballCountrySel); ballWrap.appendChild(ballPlayerSel);
+  card.appendChild(fieldRow("Golden Ball", ballWrap));
+ 
+  const bootWrap = document.createElement("div"); bootWrap.className="row2"; bootWrap.style.marginBottom="10px";
+  const bootCountrySel = document.createElement("select"); bootCountrySel.id=safe+"-bootcountry"; fillTeamSelect(bootCountrySel,"Select a country"); bootCountrySel.value=e.goldenBootCountry||"";
+  const bootPlayerSel = document.createElement("select"); bootPlayerSel.id=safe+"-bootplayer";
+  populatePlayerSelect(bootPlayerSel, bootCountrySel.value); bootPlayerSel.value=e.goldenBoot||"";
+  bootCountrySel.addEventListener("change", ()=>populatePlayerSelect(bootPlayerSel, bootCountrySel.value));
+  bootWrap.appendChild(bootCountrySel); bootWrap.appendChild(bootPlayerSel);
+  card.appendChild(fieldRow("Golden Boot", bootWrap));
+ 
+  const statusSel = document.createElement("select"); statusSel.id=safe+"-status";
+  ["pending","approved","rejected"].forEach(s=>{ const o=document.createElement("option"); o.value=s; o.textContent=s; statusSel.appendChild(o); });
+  statusSel.value = e.status;
+  card.appendChild(fieldRow("Status", statusSel));
+ 
+  const actions = document.createElement("div"); actions.className="actions";
+  const saveBtn = document.createElement("button"); saveBtn.className="approve"; saveBtn.textContent="Save";
+  saveBtn.onclick = async ()=>{
+    const updated = {
+      ...e,
+      name: nameInput.value.trim() || e.name,
+      phone: phoneInput.value.trim() || e.phone,
+      champion: champSel.value, runnerUp: runnerSel.value, secondRunnerUp: thirdSel.value,
+      champGoals: Number(champGoalsInput.value), runnerGoals: Number(runnerGoalsInput.value),
+      goldenBall: ballPlayerSel.value, goldenBallCountry: ballCountrySel.value,
+      goldenBoot: bootPlayerSel.value, goldenBootCountry: bootCountrySel.value,
+      status: statusSel.value
+    };
+    predictions[key] = updated;
+    await savePredictions();
+    editingKey = null;
+    loadAllAndRenderAdmin();
+  };
+  const cancelBtn = document.createElement("button"); cancelBtn.className="reject"; cancelBtn.textContent="Cancel";
+  cancelBtn.onclick = ()=>{ editingKey=null; renderPending(); renderConfirmedAdmin(); };
+  actions.appendChild(saveBtn); actions.appendChild(cancelBtn);
+  card.appendChild(actions);
+ 
+  return card;
+}
+ 
 function fillResultsForm(){
   if(!results) return;
   document.getElementById("r-champion").value = results.champion || "";
@@ -754,10 +846,14 @@ function fillResultsForm(){
   document.getElementById("r-third").value = results.secondRunnerUp || "";
   document.getElementById("r-champ-goals").value = results.champGoals ?? "";
   document.getElementById("r-runner-goals").value = results.runnerGoals ?? "";
-  document.getElementById("r-ball").value = results.goldenBall || "";
-  document.getElementById("r-boot").value = results.goldenBoot || "";
+  const rbc = document.getElementById("r-ball-country"); rbc.value = results.goldenBallCountry || "";
+  populatePlayerSelect(document.getElementById("r-ball-player"), rbc.value);
+  document.getElementById("r-ball-player").value = results.goldenBall || "";
+  const rtc = document.getElementById("r-boot-country"); rtc.value = results.goldenBootCountry || "";
+  populatePlayerSelect(document.getElementById("r-boot-player"), rtc.value);
+  document.getElementById("r-boot-player").value = results.goldenBoot || "";
 }
-
+ 
 document.getElementById("results-form").addEventListener("submit", async (e)=>{
   e.preventDefault();
   const msg = document.getElementById("results-msg");
@@ -766,29 +862,26 @@ document.getElementById("results-form").addEventListener("submit", async (e)=>{
   const third = document.getElementById("r-third").value;
   const champGoals = document.getElementById("r-champ-goals").value;
   const runnerGoals = document.getElementById("r-runner-goals").value;
-  const ball = document.getElementById("r-ball").value.trim();
-  const boot = document.getElementById("r-boot").value.trim();
-
+  const ballCountry = document.getElementById("r-ball-country").value;
+  const ballPlayer = document.getElementById("r-ball-player").value;
+  const bootCountry = document.getElementById("r-boot-country").value;
+  const bootPlayer = document.getElementById("r-boot-player").value;
+ 
   if(!champion || !runnerup || !third){ showMsg(msg,"Pick all three placements.",false); return; }
-
+ 
   const obj = {
     champion, runnerUp: runnerup, secondRunnerUp: third,
     champGoals: champGoals===""?null:Number(champGoals),
     runnerGoals: runnerGoals===""?null:Number(runnerGoals),
-    goldenBall: ball, goldenBoot: boot
+    goldenBall: ballPlayer, goldenBallCountry: ballCountry,
+    goldenBoot: bootPlayer, goldenBootCountry: bootCountry
   };
-  try{
-    await saveResults(obj);
-    showMsg(msg,"Saved. Leaderboard will reflect this now.",true);
-  }catch(err){
-    showMsg(msg,"Couldn't save — try again.",false);
-  }
+  try{ await saveResults(obj); showMsg(msg,"Saved. Leaderboard will reflect this now.",true); }
+  catch(err){ showMsg(msg,"Couldn't save -- try again.",false); }
 });
-
-/* ---------------- init ---------------- */
-(async function init(){
-  await renderEntryCounter();
-})();
+ 
+(async function init(){ await renderEntryCounter(); })();
 </script>
 </body>
 </html>
+ 
