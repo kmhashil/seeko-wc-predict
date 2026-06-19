@@ -68,18 +68,28 @@
   .avatar.lg{width:84px;height:84px;font-size:28px;}
   input[type=file]{font-size:12px;color:var(--text-muted);}
  
-  .ticket{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;overflow:hidden;}
+  .ticket{
+    position:relative;
+    background:radial-gradient(circle at 50% 20%, var(--surface-2) 0%, var(--surface) 100%);
+    border:2px solid var(--gold);
+    border-radius:20px;
+    padding:24px 20px;
+    width:320px;
+    margin:0 auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(232, 179, 57, 0.1);
+    overflow:hidden;
+  }
   .ticket .stamp{position:absolute;top:18px;right:-30px;transform:rotate(18deg);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;font-weight:700;padding:5px 38px;border:2px solid currentColor;border-radius:3px;text-transform:uppercase;}
   .stamp.pending{color:var(--amber);}
   .stamp.approved{color:var(--green);}
   .stamp.rejected{color:var(--red);}
-  .ticket-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
-  .ticket-head .who b{display:block;font-size:18px;font-family:'Bebas Neue';letter-spacing:.02em;}
-  .ticket-head .who span{color:var(--text-muted);font-size:13px;font-family:'Space Mono',monospace;}
-  .ticket dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:10px 0 0;font-size:14px;}
-  .ticket dt{color:var(--text-muted);}
-  .ticket dd{margin:0;}
-  .ticket .brandline{font-family:'Bebas Neue';color:var(--gold);font-size:13px;letter-spacing:.08em;margin-bottom:2px;}
+  .ticket-head{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;margin-bottom:18px;}
+  .ticket-head .who b{display:block;font-size:20px;font-family:'Bebas Neue';letter-spacing:.04em;color:var(--text);margin:0;}
+  .ticket-head .who span{color:var(--gold);font-size:12px;font-family:'Space Mono',monospace;letter-spacing:.05em;}
+  .ticket dl{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;margin:10px 0 0;font-size:13px;border-top:1px solid var(--line);padding-top:14px;}
+  .ticket dt{color:var(--text-muted);text-transform:uppercase;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.05em;text-align:left;}
+  .ticket dd{margin:0;text-align:right;font-weight:600;color:var(--text);font-size:13px;}
+  .ticket .brandline{font-family:'Bebas Neue';color:var(--gold);font-size:14px;letter-spacing:.1em;margin-bottom:12px;text-align:center;}
  
   .lb-row{display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--surface);}
   .lb-row.r1{border-left:4px solid var(--gold);}
@@ -258,33 +268,57 @@
  
 <script>
 // --- database shim ---
+const isLocal = window.location.protocol === 'file:' || 
+                window.location.hostname === 'localhost' || 
+                window.location.hostname === '127.0.0.1';
+
 const APP_KEY = "seekopredictwc_hashil_7fda7e";
+
 window.storage = {
   get: async function(key, shared) {
+    if (isLocal) {
+      try {
+        const val = localStorage.getItem(key);
+        return { value: val };
+      } catch (e) {
+        return null;
+      }
+    }
+    
     try {
-      const res = await fetch(`https://keyvalue.immanuel.co/api/KeyVal/GetValue/${APP_KEY}/${key}`);
+      const res = await fetch(`/api/storage?action=get&key=${key}`);
       if (!res.ok) return null;
-      const hexValue = await res.json();
-      if (!hexValue) return null;
-      const bytes = new Uint8Array(hexValue.match(/.{1,2}/g).map(c => parseInt(c, 16)));
-      const value = new TextDecoder().decode(bytes);
-      return { value: value };
+      const data = await res.json();
+      return { value: data.value };
     } catch (e) {
       console.error("Storage get error:", e);
       return null;
     }
   },
   set: async function(key, value, shared) {
+    if (isLocal) {
+      try {
+        localStorage.setItem(key, value);
+        return true;
+      } catch (e) {
+        throw new Error("Local storage write failed: " + e.message);
+      }
+    }
+    
     try {
       const bytes = new TextEncoder().encode(value);
       const hexValue = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
-      const res = await fetch(`https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${APP_KEY}/${key}/${hexValue}`, {
+      
+      const res = await fetch(`/api/storage?action=set&key=${key}&val=${hexValue}`, {
         method: "POST"
       });
-      return res.ok;
+      if (!res.ok) throw new Error("HTTP error " + res.status);
+      const data = await res.json();
+      if (!data.success) throw new Error("Failed to write to storage proxy");
+      return true;
     } catch (e) {
       console.error("Storage set error:", e);
-      return false;
+      throw e;
     }
   }
 };
@@ -378,8 +412,7 @@ async function savePhoto(phoneKey, dataUrl){
 }
  
 function normalizePhone(p){
-  const digits = (p || "").replace(/\D/g,"");
-  return digits.slice(-9);
+  return (p || "").replace(/\D/g,"");
 }
 function getInitials(name){
   return (name||"").trim().split(/\s+/).slice(0,2).map(w=>w[0]?w[0].toUpperCase():"").join("") || "?";
@@ -497,7 +530,7 @@ document.getElementById("predict-form").addEventListener("submit", async (e)=>{
  
   if(!name){ showMsg(submitMsg,"Enter your name.",false); return; }
   const phoneKey = normalizePhone(phoneRaw);
-  if(phoneKey.length < 6){ showMsg(submitMsg,"Enter a valid WhatsApp number.",false); return; }
+  if(phoneKey.length !== 10){ showMsg(submitMsg,"WhatsApp number must be exactly 10 digits.",false); return; }
   if(!champion || !runnerup || !third){ showMsg(submitMsg,"Pick all three placements.",false); return; }
   if(champion===runnerup || champion===third || runnerup===third){ showMsg(submitMsg,"Champion, Runner-up and 3rd place must be three different teams.",false); return; }
   if(champGoals==="" || runnerGoals==="" || Number(champGoals)<0 || Number(runnerGoals)<0){ showMsg(submitMsg,"Enter a final score for both teams.",false); return; }
