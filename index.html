@@ -274,14 +274,17 @@ const isLocal = window.location.protocol === 'file:' ||
 
 const APP_KEY = "seekopredictwc_hashil_7fda7e";
 
+// In-memory fallback for local testing if localStorage is blocked by browser security
+const localMemStorage = {};
+
 window.storage = {
   get: async function(key, shared) {
     if (isLocal) {
       try {
-        const val = localStorage.getItem(key);
+        const val = localStorage.getItem(key) || localMemStorage[key] || null;
         return { value: val };
       } catch (e) {
-        return null;
+        return { value: localMemStorage[key] || null };
       }
     }
     
@@ -299,9 +302,12 @@ window.storage = {
     if (isLocal) {
       try {
         localStorage.setItem(key, value);
+        localMemStorage[key] = value;
         return true;
       } catch (e) {
-        throw new Error("Local storage write failed: " + e.message);
+        // Fallback to in-memory if localStorage is blocked by local file:// restrictions
+        localMemStorage[key] = value;
+        return true;
       }
     }
     
