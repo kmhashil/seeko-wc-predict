@@ -422,31 +422,7 @@ const SQUADS = {
 "Uruguay": ["Fernando Muslera","Sergio Rochet","Santiago Mele","Ronald Araújo","José María Giménez","Santiago Bueno","Sebastián Cáceres","Mathías Olivera","Guillermo Varela","Matías Viña","Joaquín Piquerez","Juan Manuel Sanabria","Federico Valverde","Rodrigo Bentancur","Manuel Ugarte","Emiliano Martínez","Rodrigo Zalazar","Giorgian De Arrascaeta","Nicolás De La Cruz","Agustín Canobbio","Maximiliano Araújo","Brian Rodríguez","Facundo Pellistri","Darwin Núñez","Federico Viñas","Rodrigo Aguirre"],
 "Uzbekistan": ["Utkir Yusupov","Botirali Ergashev","Abduvokhid Nematov","Avazbek Ulmasaliev","Jakhongir Urozov","Rustamjon Ashurmatov","Umarbek Eshmurodov","Abdukodir Khusanov","Abdulla Abdullaev","Farrukh Sayfiev","Khojiakbar Alijonov","Sherzod Nasrullaev","Behruz Karimov","Sherzod Esanov","Umarali Rakhmonaliev","Akmal Mozgovoy","Otabek Shukurov","Jamshid Iskanderov","Azizjon Ganiev","Abbosek Fayzullaev","Jaloliddin Masharipov","Dostonbek Khamdamov","Oston Urunov","Azizbek Amonov","Igor Sergeev","Eldor Shomurodov"]
 };
- 
-const PRED_KEY = "wc26_predictions";
-const RESULTS_KEY = "wc26_results";
-const PHOTO_PREFIX = "wc26_photo_";
- 
-let predictions = {};
-let results = null;
-let adminUnlocked = false;
-let editingKey = null;
-let currentPhotoDataUrl = null;
-let lastSubmittedEntry = null;
- 
-async function loadPredictions(){
-  try{ const r = await window.storage.get(PRED_KEY, true); predictions = r && r.value ? JSON.parse(r.value) : {}; }
-  catch(e){ predictions = {}; }
-}
-async function savePredictions(){ await window.storage.set(PRED_KEY, JSON.stringify(predictions), true); }
-async function loadResults(){
-  try{ const r = await window.storage.get(RESULTS_KEY, true); results = r && r.value ? JSON.parse(r.value) : null; }
-  catch(e){ results = null; }
-}
-async function saveResults(obj){ results = obj; await window.storage.set(RESULTS_KEY, JSON.stringify(obj), true); }
-async function savePhoto(phoneKey, dataUrl){
-  try{ if(dataUrl) await window.storage.set(PHOTO_PREFIX+phoneKey, dataUrl, true); }catch(e){}
-}
+
  
 function normalizePhone(p){
   return (p || "").replace(/\D/g,"");
