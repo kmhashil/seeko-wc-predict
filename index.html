@@ -272,65 +272,94 @@ const isLocal = window.location.protocol === 'file:' ||
                 window.location.hostname === 'localhost' || 
                 window.location.hostname === '127.0.0.1';
 
-const APP_KEY = "seekopredictwc_hashil_7fda7e";
+// In-memory cache of the full app state (avoids repeated fetches)
+let _stateCache = null;
 
-// In-memory fallback for local testing if localStorage is blocked by browser security
-const localMemStorage = {};
-
-window.storage = {
-  get: async function(key, shared) {
-    if (isLocal) {
-      try {
-        const val = localStorage.getItem(key) || localMemStorage[key] || null;
-        return { value: val };
-      } catch (e) {
-        return { value: localMemStorage[key] || null };
-      }
-    }
-    
+async function _readState() {
+  if (isLocal) {
     try {
-      const res = await fetch(`/api/storage?action=get&key=${key}`);
-      if (!res.ok) return null;
-      const data = await res.json();
-      return { value: data.value };
-    } catch (e) {
-      console.error("Storage get error:", e);
-      return null;
-    }
-  },
-  set: async function(key, value, shared) {
-    if (isLocal) {
-      try {
-        localStorage.setItem(key, value);
-        localMemStorage[key] = value;
-        return true;
-      } catch (e) {
-        // Fallback to in-memory if localStorage is blocked by local file:// restrictions
-        localMemStorage[key] = value;
-        return true;
-      }
-    }
-    
-    try {
-      const bytes = new TextEncoder().encode(value);
-      const hexValue = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
-      
-      const res = await fetch(`/api/storage?action=set&key=${encodeURIComponent(key)}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ val: hexValue })
-      });
-      if (!res.ok) throw new Error("HTTP error " + res.status);
-      const data = await res.json();
-      if (!data.success) throw new Error("Failed to write to storage proxy");
-      return true;
-    } catch (e) {
-      console.error("Storage set error:", e);
-      throw e;
+      const raw = localStorage.getItem('seeko_wc26_state');
+      return raw ? JSON.parse(raw) : { wc26_predictions: {}, wc26_results: null, photos: {} };
+    } catch(e) {
+      return _stateCache || { wc26_predictions: {}, wc26_results: null, photos: {} };
     }
   }
-};
+  try {
+    const res = await fetch('/api/storage', { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) throw new Error('Read failed: ' + res.status);
+    const data = await res.json();
+    _stateCache = data;
+    return data;
+  } catch(e) {
+    console.error('State read error:', e);
+    return _stateCache || { wc26_predictions: {}, wc26_results: null, photos: {} };
+  }
+}
+
+async function _writeState(state) {
+  _stateCache = state;
+  if (isLocal) {
+    try { localStorage.setItem('seeko_wc26_state', JSON.stringify(state)); } catch(e) {}
+    return true;
+  }
+  const res = await fetch('/api/storage', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(state)
+  });
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error('Write failed: ' + res.status + ' ' + txt);
+  }
+  const data = await res.json();
+  if (!data.success) throw new Error('Write rejected by storage');
+  return true;
+}
 // --- end database shim ---
+
+const PRED_KEY = "wc26_predictions";
+const RESULTS_KEY = "wc26_results";
+const PHOTO_PREFIX = "wc26_photo_";
+
+let predictions = {};
+let results = null;
+let adminUnlocked = false;
+let editingKey = null;
+let currentPhotoDataUrl = null;
+let lastSubmittedEntry = null;
+
+async function loadPredictions(){
+  try {
+    const state = await _readState();
+    predictions = (state && state.wc26_predictions) ? state.wc26_predictions : {};
+  } catch(e) { predictions = {}; }
+}
+async function savePredictions(){
+  const state = await _readState();
+  state.wc26_predictions = predictions;
+  await _writeState(state);
+}
+async function loadResults(){
+  try {
+    const state = await _readState();
+    results = (state && state.wc26_results !== undefined) ? state.wc26_results : null;
+  } catch(e) { results = null; }
+}
+async function saveResults(obj){
+  results = obj;
+  const state = await _readState();
+  state.wc26_results = obj;
+  await _writeState(state);
+}
+async function savePhoto(phoneKey, dataUrl){
+  if (!dataUrl) return;
+  try {
+    const state = await _readState();
+    if (!state.photos) state.photos = {};
+    state.photos[phoneKey] = dataUrl;
+    await _writeState(state);
+  } catch(e) {}
+}
 
 const ADMIN_PIN = "2026EE7";
  
