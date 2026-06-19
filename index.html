@@ -315,8 +315,10 @@ window.storage = {
       const bytes = new TextEncoder().encode(value);
       const hexValue = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
       
-      const res = await fetch(`/api/storage?action=set&key=${key}&val=${hexValue}`, {
-        method: "POST"
+      const res = await fetch(`/api/storage?action=set&key=${encodeURIComponent(key)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ val: hexValue })
       });
       if (!res.ok) throw new Error("HTTP error " + res.status);
       const data = await res.json();
