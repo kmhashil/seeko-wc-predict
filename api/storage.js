@@ -15,6 +15,26 @@ function readBody(req) {
   });
 }
 
+// Fetch helper with retries and exponential backoff
+async function fetchWithRetry(url, options = {}, retries = 4, delay = 200) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const response = await fetch(url, options);
+      if (response.ok) {
+        return response;
+      }
+      const text = await response.clone().text().catch(() => "");
+      console.warn(`JSONBlob fetch attempt ${i + 1} failed: status=${response.status} body=${text}. Retrying...`);
+    } catch (err) {
+      console.warn(`JSONBlob fetch attempt ${i + 1} failed with error: ${err.message}. Retrying...`);
+    }
+    if (i < retries - 1) {
+      await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+    }
+  }
+  return fetch(url, options);
+}
+
 export default async function handler(req, res) {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -28,8 +48,8 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      // Read current state from JSONBlob
-      const response = await fetch(BLOB_URL, {
+      // Read current state from JSONBlob with retry
+      const response = await fetchWithRetry(BLOB_URL, {
         headers: { 'Accept': 'application/json' }
       });
       if (!response.ok) {
@@ -51,7 +71,8 @@ export default async function handler(req, res) {
         body = JSON.parse(raw);
       }
 
-      const response = await fetch(BLOB_URL, {
+      // Write to JSONBlob with retry
+      const response = await fetchWithRetry(BLOB_URL, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
