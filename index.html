@@ -213,8 +213,8 @@
       <h2 class="h">Download My Prediction Card</h2>
       <p class="hint">Enter the WhatsApp number you submitted with to get your card.</p>
       <div class="card" style="max-width:400px;">
-        <label for="mc-phone">WhatsApp number</label>
-        <input type="tel" id="mc-phone" placeholder="WhatsApp number" maxlength="15">
+        <label for="mc-phone">WhatsApp number (10 digits)</label>
+        <input type="tel" id="mc-phone" placeholder="9XXXXXXXXX" maxlength="15">
         <button class="primary" onclick="lookupCard()" style="margin-top:16px;">Find My Card</button>
         <div class="msg" id="mc-msg"></div>
       </div>
@@ -632,7 +632,7 @@ document.getElementById("predict-form").addEventListener("submit", async (e)=>{
   if(!name){ showMsg(submitMsg,"Enter your name.",false); return; }
   if(!currentPhotoDataUrl){ showMsg(submitMsg,"Upload a profile photo — it's required.",false); return; }
   const phoneKey = normalizePhone(phoneRaw);
-  if(phoneKey.length < 6 || phoneKey.length > 15){ showMsg(submitMsg,"WhatsApp number must be between 6 and 15 digits.",false); return; }
+  if(phoneKey.length !== 10){ showMsg(submitMsg,"WhatsApp number must be exactly 10 digits.",false); return; }
   if(!champion || !runnerup || !third){ showMsg(submitMsg,"Pick all three placements.",false); return; }
   if(champion===runnerup || champion===third || runnerup===third){ showMsg(submitMsg,"Champion, Runner-up and 3rd place must be three different teams.",false); return; }
   if(champGoals==="" || runnerGoals==="" || Number(champGoals)<0 || Number(runnerGoals)<0){ showMsg(submitMsg,"Enter a final score for both teams.",false); return; }
@@ -749,8 +749,8 @@ async function lookupCard(){
   mcMsg.className = "msg";
   wrap.style.display = "none";
 
-  if(phoneKey.length < 6 || phoneKey.length > 15){
-    mcMsg.textContent = "Enter your WhatsApp number (6 to 15 digits).";
+  if(phoneKey.length !== 10){
+    mcMsg.textContent = "Enter your 10-digit WhatsApp number.";
     mcMsg.className = "msg show error";
     return;
   }

@@ -49,6 +49,6 @@ To mirror all prediction submissions to a Google Sheet automatically:
 
 ## 🔧 Maintenance & Admin Panel Updates
 
-* **Phone Validation relaxed**: The app now accepts phone numbers between 6 and 15 digits to support international formats (e.g. UAE numbers starting with `00971` or `+971`).
+* **Phone Validation**: The app enforces strictly 10-digit WhatsApp numbers to maintain database format integrity.
 * **Admin Autorefresh**: The admin panel now forces a database reload every time it is opened, and auto-refreshes every 30 seconds to show new incoming predictions without requiring page reloads. A manual **🔄 Refresh** button has also been added.
 
