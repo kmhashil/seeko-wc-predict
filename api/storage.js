@@ -2,7 +2,7 @@
 // Vercel Serverless Function - proxies JSONBlob to bypass browser CORS
 // JSONBlob stores the entire app state as one JSON object
 
-const BLOB_ID = "019edf75-2cb6-73fb-8c6f-525bd55cc1c3";
+const BLOB_ID = "019ee533-a0ad-770c-96c8-c8938decef40";
 const BLOB_URL = `https://jsonblob.com/api/jsonBlob/${BLOB_ID}`;
 
 // Helper to read raw body from request stream

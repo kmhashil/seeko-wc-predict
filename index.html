@@ -120,6 +120,7 @@
 </head>
 <body>
 <div class="wrap">
+  <div id="backup-warning-banner" style="display:none; background: #e5667a; color: #fff; text-align: center; padding: 10px; font-weight: bold; font-family: 'Space Mono', monospace; font-size: 13px; border-radius: 6px; margin: 10px auto; max-width: 600px; z-index: 1000; position: relative;">⚠️ Note: Failed to reach remote database. Serving cached local backup. Changes might not sync.</div>
  
   <header class="topbar">
     <div class="eyebrow">WhatsApp Group Pool &middot; One entry per number</div>
@@ -212,8 +213,8 @@
       <h2 class="h">Download My Prediction Card</h2>
       <p class="hint">Enter the WhatsApp number you submitted with to get your card.</p>
       <div class="card" style="max-width:400px;">
-        <label for="mc-phone">WhatsApp number (10 digits)</label>
-        <input type="tel" id="mc-phone" placeholder="9XXXXXXXXX" maxlength="15">
+        <label for="mc-phone">WhatsApp number</label>
+        <input type="tel" id="mc-phone" placeholder="WhatsApp number" maxlength="15">
         <button class="primary" onclick="lookupCard()" style="margin-top:16px;">Find My Card</button>
         <div class="msg" id="mc-msg"></div>
       </div>
@@ -238,7 +239,7 @@
       <div id="admin-unlocked" style="display:none;">
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <h2 class="h">Pending review</h2>
-          <button class="ghost" onclick="loadAllAndRenderAdmin()">Refresh</button>
+          <button class="ghost" onclick="loadAllAndRenderAdmin(true)">🔄 Refresh</button>
         </div>
         <div id="admin-pending"></div>
  
@@ -283,6 +284,27 @@
 </div>
  
 <script>
+// --- Google Sheets Backup Config ---
+// Paste your deployed Google Apps Script Web App URL below:
+const GOOGLE_SHEETS_URL = "";
+
+async function postToGoogleSheets(entry) {
+  if (!GOOGLE_SHEETS_URL) return;
+  try {
+    await fetch(GOOGLE_SHEETS_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain"
+      },
+      body: JSON.stringify(entry),
+      mode: "no-cors"
+    });
+    console.log("Synced to Google Sheets");
+  } catch(e) {
+    console.error("Google Sheets sync failed:", e);
+  }
+}
+
 // --- database shim ---
 const isLocal = window.location.protocol === 'file:' || 
                 window.location.hostname === 'localhost' || 
@@ -290,6 +312,17 @@ const isLocal = window.location.protocol === 'file:' ||
 
 // In-memory cache of the full app state (avoids repeated fetches)
 let _stateCache = null;
+let _isBackupMode = false;
+
+function showBackupWarningBanner() {
+  const banner = document.getElementById("backup-warning-banner");
+  if (banner) banner.style.display = "block";
+}
+
+function hideBackupWarningBanner() {
+  const banner = document.getElementById("backup-warning-banner");
+  if (banner) banner.style.display = "none";
+}
 
 async function _readState(forceRefresh) {
   if (isLocal) {
@@ -307,15 +340,36 @@ async function _readState(forceRefresh) {
     if (!res.ok) throw new Error('Read failed: ' + res.status);
     const data = await res.json();
     _stateCache = data;
+    _isBackupMode = false;
+    hideBackupWarningBanner();
     return data;
   } catch(e) {
-    console.error('State read error:', e);
+    console.error('State read error (attempting localStorage backup fallback):', e);
+    try {
+      const backupRaw = localStorage.getItem('seeko_wc26_backup');
+      if (backupRaw) {
+        const backupData = JSON.parse(backupRaw);
+        _stateCache = backupData;
+        _isBackupMode = true;
+        showBackupWarningBanner();
+        return backupData;
+      }
+    } catch(err) {
+      console.error('Failed to read from localStorage backup:', err);
+    }
     return _stateCache || { wc26_predictions: {}, wc26_results: null, photos: {} };
   }
 }
 
 async function _writeState(state) {
   _stateCache = state;
+  // Always update local mirror as a fail-safe backup, even in production
+  try {
+    localStorage.setItem('seeko_wc26_backup', JSON.stringify(state));
+  } catch(e) {
+    console.error('Local backup write failed:', e);
+  }
+
   if (isLocal) {
     try { localStorage.setItem('seeko_wc26_state', JSON.stringify(state)); } catch(e) {}
     return true;
@@ -346,9 +400,9 @@ let editingKey = null;
 let currentPhotoDataUrl = null;
 let lastSubmittedEntry = null;
 
-async function loadPredictions(){
+async function loadPredictions(forceRefresh){
   try {
-    const state = await _readState();
+    const state = await _readState(forceRefresh);
     predictions = (state && state.wc26_predictions) ? state.wc26_predictions : {};
   } catch(e) { predictions = {}; }
 }
@@ -358,9 +412,9 @@ async function savePredictions(){
   state.wc26_predictions = predictions;
   await _writeState(state);
 }
-async function loadResults(){
+async function loadResults(forceRefresh){
   try {
-    const state = await _readState();
+    const state = await _readState(forceRefresh);
     results = (state && state.wc26_results !== undefined) ? state.wc26_results : null;
   } catch(e) { results = null; }
 }
@@ -453,14 +507,28 @@ function getInitials(name){
 document.querySelectorAll("nav.tabs button").forEach(btn=>{
   btn.addEventListener("click", ()=> switchTab(btn.dataset.tab));
 });
+
+let adminRefreshInterval = null;
+
 function switchTab(tab){
   document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("active", b.dataset.tab===tab));
   document.querySelectorAll("section.panel").forEach(p=>p.classList.remove("active"));
   document.getElementById("panel-"+tab).classList.add("active");
+  
+  if (adminRefreshInterval) {
+    clearInterval(adminRefreshInterval);
+    adminRefreshInterval = null;
+  }
+  
   if(tab==="leaderboard") renderLeaderboard();
   if(tab==="submit") renderEntryCounter();
   if(tab==="mycard") { document.getElementById('mc-ticket-wrap').style.display='none'; document.getElementById('mc-msg').className='msg'; }
-  if(tab==="admin" && adminUnlocked) loadAllAndRenderAdmin();
+  if(tab==="admin" && adminUnlocked) {
+    loadAllAndRenderAdmin(true);
+    adminRefreshInterval = setInterval(() => {
+      loadAllAndRenderAdmin(true);
+    }, 30000);
+  }
 }
  
 function fillTeamSelect(sel, label){
@@ -564,7 +632,7 @@ document.getElementById("predict-form").addEventListener("submit", async (e)=>{
   if(!name){ showMsg(submitMsg,"Enter your name.",false); return; }
   if(!currentPhotoDataUrl){ showMsg(submitMsg,"Upload a profile photo — it's required.",false); return; }
   const phoneKey = normalizePhone(phoneRaw);
-  if(phoneKey.length !== 10){ showMsg(submitMsg,"WhatsApp number must be exactly 10 digits.",false); return; }
+  if(phoneKey.length < 6 || phoneKey.length > 15){ showMsg(submitMsg,"WhatsApp number must be between 6 and 15 digits.",false); return; }
   if(!champion || !runnerup || !third){ showMsg(submitMsg,"Pick all three placements.",false); return; }
   if(champion===runnerup || champion===third || runnerup===third){ showMsg(submitMsg,"Champion, Runner-up and 3rd place must be three different teams.",false); return; }
   if(champGoals==="" || runnerGoals==="" || Number(champGoals)<0 || Number(runnerGoals)<0){ showMsg(submitMsg,"Enter a final score for both teams.",false); return; }
@@ -589,7 +657,10 @@ document.getElementById("predict-form").addEventListener("submit", async (e)=>{
     status: "pending", submittedAt: new Date().toISOString()
   };
   predictions[phoneKey] = entry;
-  try{ await savePredictions(); }
+  try{ 
+    await savePredictions(); 
+    postToGoogleSheets(entry);
+  }
   catch(err){ showMsg(submitMsg,"Couldn't save -- check your connection and try again.",false); return; }
  
   await savePhoto(phoneKey, currentPhotoDataUrl);
@@ -678,8 +749,8 @@ async function lookupCard(){
   mcMsg.className = "msg";
   wrap.style.display = "none";
 
-  if(phoneKey.length !== 10){
-    mcMsg.textContent = "Enter your 10-digit WhatsApp number.";
+  if(phoneKey.length < 6 || phoneKey.length > 15){
+    mcMsg.textContent = "Enter your WhatsApp number (6 to 15 digits).";
     mcMsg.className = "msg show error";
     return;
   }
@@ -860,13 +931,18 @@ function unlockAdmin(){
     adminUnlocked = true;
     document.getElementById("admin-locked").style.display="none";
     document.getElementById("admin-unlocked").style.display="block";
-    loadAllAndRenderAdmin();
+    loadAllAndRenderAdmin(true);
+    if (!adminRefreshInterval) {
+      adminRefreshInterval = setInterval(() => {
+        loadAllAndRenderAdmin(true);
+      }, 30000);
+    }
   }else{ showMsg(msg, "Wrong PIN.", false); }
 }
  
-async function loadAllAndRenderAdmin(){
-  await loadPredictions();
-  await loadResults();
+async function loadAllAndRenderAdmin(forceRefresh){
+  await loadPredictions(forceRefresh);
+  await loadResults(forceRefresh);
   renderPending();
   renderConfirmedAdmin();
   fillResultsForm();
@@ -910,8 +986,18 @@ function buildPendingDisplayCard(key, e){
   return card;
 }
  
-async function approveEntry(key){ predictions[key].status = "approved"; await savePredictions(); loadAllAndRenderAdmin(); }
-async function rejectEntry(key){ predictions[key].status = "rejected"; await savePredictions(); loadAllAndRenderAdmin(); }
+async function approveEntry(key){ 
+  predictions[key].status = "approved"; 
+  await savePredictions(); 
+  postToGoogleSheets(predictions[key]);
+  loadAllAndRenderAdmin(); 
+}
+async function rejectEntry(key){ 
+  predictions[key].status = "rejected"; 
+  await savePredictions(); 
+  postToGoogleSheets(predictions[key]);
+  loadAllAndRenderAdmin(); 
+}
  
 function renderConfirmedAdmin(){
   const box = document.getElementById("admin-confirmed");
@@ -1006,6 +1092,7 @@ function buildEditCard(key, e){
     };
     predictions[key] = updated;
     await savePredictions();
+    postToGoogleSheets(updated);
     editingKey = null;
     loadAllAndRenderAdmin();
   };
