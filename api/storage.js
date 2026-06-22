@@ -1,9 +1,8 @@
 // api/storage.js
-// Vercel Serverless Function - proxies JSONBlob to bypass browser CORS
-// JSONBlob stores the entire app state as one JSON object
+// Vercel Serverless Function - proxies Google Sheets Web App to bypass browser CORS
+// Google Sheets Web App stores the entire app state in Google Drive as seeko_wc26_state.json
 
-const BLOB_ID = "019ee533-a0ad-770c-96c8-c8938decef40";
-const BLOB_URL = `https://jsonblob.com/api/jsonBlob/${BLOB_ID}`;
+const GOOGLE_SHEETS_URL = process.env.GOOGLE_SHEETS_URL || "https://script.google.com/macros/s/AKfycbwZ1L49dH1DWXfek-BNz9uABHFjcsjm5DDkdAalJCjMG6tuUvuhFM_oqIRYIaSzq34U/exec";
 
 // Helper to read raw body from request stream
 function readBody(req) {
@@ -24,9 +23,9 @@ async function fetchWithRetry(url, options = {}, retries = 4, delay = 200) {
         return response;
       }
       const text = await response.clone().text().catch(() => "");
-      console.warn(`JSONBlob fetch attempt ${i + 1} failed: status=${response.status} body=${text}. Retrying...`);
+      console.warn(`Google Sheets fetch attempt ${i + 1} failed: status=${response.status} body=${text}. Retrying...`);
     } catch (err) {
-      console.warn(`JSONBlob fetch attempt ${i + 1} failed with error: ${err.message}. Retrying...`);
+      console.warn(`Google Sheets fetch attempt ${i + 1} failed with error: ${err.message}. Retrying...`);
     }
     if (i < retries - 1) {
       await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
@@ -48,20 +47,20 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      // Read current state from JSONBlob with retry
-      const response = await fetchWithRetry(BLOB_URL, {
+      // Read current state from Google Sheets Web App with retry
+      const response = await fetchWithRetry(`${GOOGLE_SHEETS_URL}?action=read`, {
         headers: { 'Accept': 'application/json' }
       });
       if (!response.ok) {
         const text = await response.text();
-        console.error('JSONBlob GET error:', response.status, text);
+        console.error('Google Sheets GET error:', response.status, text);
         return res.status(response.status).json({ error: 'Storage read failed: ' + response.status });
       }
       const data = await response.json();
       return res.status(200).json(data);
 
     } else if (req.method === 'POST') {
-      // Write new state to JSONBlob
+      // Write new state to Google Sheets Web App
       // Read raw body (works regardless of body parser availability)
       let body;
       if (req.body && typeof req.body === 'object') {
@@ -71,18 +70,17 @@ export default async function handler(req, res) {
         body = JSON.parse(raw);
       }
 
-      // Write to JSONBlob with retry
-      const response = await fetchWithRetry(BLOB_URL, {
-        method: 'PUT',
+      // Write to Google Sheets Web App with retry
+      const response = await fetchWithRetry(`${GOOGLE_SHEETS_URL}?action=write`, {
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Content-Type': 'text/plain'
         },
         body: JSON.stringify(body)
       });
       if (!response.ok) {
         const text = await response.text();
-        console.error('JSONBlob PUT error:', response.status, text);
+        console.error('Google Sheets POST error:', response.status, text);
         return res.status(response.status).json({ error: 'Storage write failed: ' + response.status });
       }
       const data = await response.json();

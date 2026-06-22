@@ -1,8 +1,7 @@
 // api/keepalive.js
-// Vercel Serverless Function - triggered by Vercel Cron to keep JSONBlob active
+// Vercel Serverless Function - triggered by Vercel Cron to keep Google Sheets state warm
 
-const BLOB_ID = "019ee533-a0ad-770c-96c8-c8938decef40";
-const BLOB_URL = `https://jsonblob.com/api/jsonBlob/${BLOB_ID}`;
+const GOOGLE_SHEETS_URL = process.env.GOOGLE_SHEETS_URL || "https://script.google.com/macros/s/AKfycbwZ1L49dH1DWXfek-BNz9uABHFjcsjm5DDkdAalJCjMG6tuUvuhFM_oqIRYIaSzq34U/exec";
 
 // Fetch helper with retries and exponential backoff
 async function fetchWithRetry(url, options = {}, retries = 4, delay = 200) {
@@ -13,9 +12,9 @@ async function fetchWithRetry(url, options = {}, retries = 4, delay = 200) {
         return response;
       }
       const text = await response.clone().text().catch(() => "");
-      console.warn(`JSONBlob fetch attempt ${i + 1} failed: status=${response.status} body=${text}. Retrying...`);
+      console.warn(`Google Sheets fetch attempt ${i + 1} failed: status=${response.status} body=${text}. Retrying...`);
     } catch (err) {
-      console.warn(`JSONBlob fetch attempt ${i + 1} failed with error: ${err.message}. Retrying...`);
+      console.warn(`Google Sheets fetch attempt ${i + 1} failed with error: ${err.message}. Retrying...`);
     }
     if (i < retries - 1) {
       await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
@@ -27,7 +26,7 @@ async function fetchWithRetry(url, options = {}, retries = 4, delay = 200) {
 export default async function handler(req, res) {
   try {
     console.log('Keep-alive triggered. Fetching current state...');
-    const response = await fetchWithRetry(BLOB_URL, {
+    const response = await fetchWithRetry(`${GOOGLE_SHEETS_URL}?action=read`, {
       headers: { 'Accept': 'application/json' }
     });
     if (!response.ok) {
@@ -35,20 +34,19 @@ export default async function handler(req, res) {
     }
     const data = await response.json();
 
-    console.log('State fetched. Writing back to reset TTL...');
-    const putResponse = await fetchWithRetry(BLOB_URL, {
-      method: 'PUT',
+    console.log('State fetched. Writing back to keep Google Drive file warm...');
+    const putResponse = await fetchWithRetry(`${GOOGLE_SHEETS_URL}?action=write`, {
+      method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Content-Type': 'text/plain'
       },
       body: JSON.stringify(data)
     });
     if (!putResponse.ok) {
-      throw new Error(`PUT failed: ${putResponse.status}`);
+      throw new Error(`POST failed: ${putResponse.status}`);
     }
 
-    return res.status(200).json({ success: true, message: 'JSONBlob keep-alive successful, TTL reset.' });
+    return res.status(200).json({ success: true, message: 'Google Sheets keep-alive successful.' });
   } catch (error) {
     console.error('Keepalive handler error:', error);
     return res.status(500).json({ error: error.message });
